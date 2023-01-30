@@ -25,29 +25,7 @@ export class CompanyAdminService {
     return this.companyAdminRepository.getAllCompanyPosts(companyId);
   }
 
-  async getAJobPost(jobId: string, user: boolean): Promise<JobPost[]> {
-    return this.companyAdminRepository.getAJobPost(jobId, user);
-  }
-
-  async rejectApplicant(applicantId: string, jobId: string): Promise<boolean> {
-    return this.companyAdminRepository.rejectApplicant(applicantId, jobId);
-  }
-
-  async acceptApplicant(applicantId: string, jobId: string): Promise<boolean> {
-    return this.companyAdminRepository.acceptApplicant(applicantId, jobId);
-  }
-
-  async acceptApplicantAndSchedule(
-    formData: any,
-    applicantId: string,
-    jobId: string,
-    adminId: string,
-  ): Promise<boolean> {
-    return this.companyAdminRepository.acceptApplicantAndSchedule(
-      formData,
-      applicantId,
-      jobId,
-      adminId,
-    );
+  async getAJobPost(jobId: string): Promise<JobPost[]> {
+    return this.companyAdminRepository.getAJobPost(jobId);
   }
 }

@@ -45,53 +45,9 @@ export class CompanyAdminController {
   }
 
   @Get('/getAJobPost')
-  async getAJobPost(
-    @Query() object: { jobId: string; users: string },
-  ): Promise<JobPost[]> {
-    let user;
-    if (object.users == 'true') user = true;
-    else user = false;
+  async getAJobPost(@Query() object: { jobId: string }): Promise<JobPost[]> {
     if (!object.jobId)
       throw new HttpException('An Error occurred', HttpStatus.BAD_REQUEST);
-    return this.companyAdminService.getAJobPost(object.jobId, user);
-  }
-
-  @Get('/rejectApplicant')
-  async rejectApplicant(
-    @Query() object: { applicantId: string; jobId: string },
-  ): Promise<boolean> {
-    if (!object.applicantId)
-      throw new HttpException('An Error occurred', HttpStatus.BAD_REQUEST);
-    return this.companyAdminService.rejectApplicant(
-      object.applicantId,
-      object.jobId,
-    );
-  }
-
-  @Get('/acceptApplicant')
-  async acceptApplicant(
-    @Query() object: { applicantId: string; jobId: string },
-  ): Promise<boolean> {
-    if (!object.applicantId)
-      throw new HttpException('An Error occurred', HttpStatus.BAD_REQUEST);
-    return this.companyAdminService.acceptApplicant(
-      object.applicantId,
-      object.jobId,
-    );
-  }
-
-  @Post('/acceptApplicant')
-  async acceptApplicantAndSchedule(
-    @Body() formData: any,
-    @Query() object: { jobId: string; applicantId: string; adminId: string },
-  ): Promise<boolean> {
-    if (!object.applicantId || !object.jobId || !object.adminId)
-      throw new HttpException('An Error occurred', HttpStatus.BAD_REQUEST);
-    return this.companyAdminService.acceptApplicantAndSchedule(
-      formData,
-      object.applicantId,
-      object.jobId,
-      object.adminId,
-    );
+    return this.companyAdminService.getAJobPost(object.jobId);
   }
 }
