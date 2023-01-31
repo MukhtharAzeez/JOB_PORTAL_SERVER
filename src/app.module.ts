@@ -8,6 +8,7 @@ import { AuthModule } from './auth/auth.module';
 import { AdminModule } from './admin/admin.module';
 import { CompanyAdminModule } from './company-admin/company-admin.module';
 import { JobApplicantsModule } from './job-applicants/job-applicants.module';
+import { ChatModule } from './chat/chat.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { JobApplicantsModule } from './job-applicants/job-applicants.module';
     AdminModule,
     CompanyAdminModule,
     JobApplicantsModule,
+    ChatModule,
   ],
   controllers: [],
 })
