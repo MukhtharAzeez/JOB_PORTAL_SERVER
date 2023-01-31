@@ -25,4 +25,12 @@ export class UserService {
   async applyForJob(jobId: string, userId: string): Promise<boolean> {
     return this.userRepository.applyForJob(jobId, userId);
   }
+
+  async connectFriend(userId: string, friendId: string): Promise<boolean> {
+    return this.userRepository.connectFriend(userId, friendId);
+  }
+
+  async userFriends(userId: string): Promise<User[]> {
+    return this.userRepository.userFriends(userId);
+  }
 }

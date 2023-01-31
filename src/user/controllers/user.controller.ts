@@ -45,4 +45,18 @@ export class UserController {
   ): Promise<boolean> {
     return this.userService.applyForJob(object.jobId, object.userId);
   }
+
+  @Get('/sendFriendRequest')
+  async sendFriendRequest(
+    @Query() object: { userId: string; friendId: string },
+  ): Promise<boolean> {
+    return this.userService.connectFriend(object.userId, object.friendId);
+  }
+
+  @Get('/userFriends')
+  async userFriends(@Query() object: { userId: string }): Promise<User[]> {
+    if (object.userId == 'null')
+      throw new HttpException('Ann error occurred', HttpStatus.ACCEPTED);
+    return this.userService.userFriends(object.userId);
+  }
 }

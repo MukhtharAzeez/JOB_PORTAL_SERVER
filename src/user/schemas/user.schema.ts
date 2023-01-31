@@ -1,7 +1,7 @@
 /* eslint-disable prettier/prettier */
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
-import {Schema as MongooseSchema } from 'mongoose';
+import {Schema as MongooseSchema ,Types} from 'mongoose';
 
 
 export type UserDocument = HydratedDocument<User>;
@@ -63,6 +63,12 @@ export class User {
 
   @Prop()
   skills: Array<string>;
+
+  @Prop({ ref: 'user' })
+  friends: Array<Types.ObjectId>;
+
+  @Prop({ ref: 'company' })
+  companies: Array<Types.ObjectId>;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

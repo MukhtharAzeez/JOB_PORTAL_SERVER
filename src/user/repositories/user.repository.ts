@@ -99,4 +99,80 @@ export class UserRepository {
     );
     return true;
   }
+
+  async connectFriend(userId: string, friendId: string): Promise<boolean> {
+    const alreadyConnected = await this.userModel.findOne({
+      _id: userId,
+      friends: { $in: [new Types.ObjectId(friendId)] },
+    });
+    if (!alreadyConnected) {
+      await this.userModel.updateOne(
+        { _id: userId },
+        {
+          $push: {
+            friends: new Types.ObjectId(friendId),
+          },
+        },
+      );
+      await this.userModel.updateOne(
+        { _id: friendId },
+        {
+          $push: {
+            friends: new Types.ObjectId(userId),
+          },
+        },
+      );
+      return true;
+    } else {
+      await this.userModel.updateOne(
+        { _id: userId },
+        {
+          $pull: {
+            friends: new Types.ObjectId(friendId),
+          },
+        },
+      );
+      await this.userModel.updateOne(
+        { _id: friendId },
+        {
+          $pull: {
+            friends: new Types.ObjectId(userId),
+          },
+        },
+      );
+    }
+    return false;
+  }
+
+  async userFriends(userId: string): Promise<User[]> {
+    const friends = await this.userModel.aggregate([
+      {
+        $match: { _id: new Types.ObjectId(userId) },
+      },
+      {
+        $unwind: {
+          path: '$friends',
+        },
+      },
+      {
+        $project: {
+          friends: 1,
+        },
+      },
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'friends',
+          foreignField: '_id',
+          as: 'friends',
+        },
+      },
+      {
+        $project: {
+          friend: { $arrayElemAt: ['$friends', 0] },
+        },
+      },
+    ]);
+    return friends;
+  }
 }
