@@ -14,7 +14,7 @@ export class ChatController {
   async createChat(@Body() object: { senderId: string; receiverId; string }) {
     return this.chatService.createChat(object.senderId, object.receiverId);
   }
-  @Get('/:userId')
+  @Get('/user/:userId')
   async userChats(@Param() object: { userId: string }) {
     return this.chatService.userChats(object.userId);
   }
@@ -27,7 +27,6 @@ export class ChatController {
   async sendMessage(
     @Body() object: { senderId: string; chatId: string; text: string },
   ) {
-    console.log(object);
     return this.chatService.sendMessage(
       object.senderId,
       object.chatId,
