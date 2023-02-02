@@ -12,6 +12,10 @@ export class ChatGateway implements OnGatewayConnection {
   activeUser: any[] = [];
   // constructor() {}
 
+  async getUser(userId) {
+    return this.activeUser.find((user) => user.userId == userId);
+  }
+
   async handleConnection(socket: Socket) {
     socket.on('new-user-add', (newUserId: string) => {
       if (!this.activeUser.some((user) => user.userId === newUserId)) {
@@ -20,8 +24,8 @@ export class ChatGateway implements OnGatewayConnection {
           socketId: socket.id,
         });
       }
-      socket.emit('get-user', this.activeUser);
     });
+    socket.emit('get-user', this.activeUser);
     socket.on('send-message', (data: any) => {
       const { receiverId } = data;
       const user = this.activeUser.find((user) => user.userId === receiverId);

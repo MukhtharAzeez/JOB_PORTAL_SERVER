@@ -20,7 +20,7 @@ export class CompanyAdminController {
   async getProfile(
     @Query() object: { adminId: string },
   ): Promise<CompanyAdmin> {
-    if (!object.adminId)
+    if (object.adminId == 'undefined' || !object.adminId)
       throw new HttpException('An Error occurred', HttpStatus.BAD_REQUEST);
     return this.companyAdminService.getProfile(object.adminId);
   }
@@ -39,14 +39,14 @@ export class CompanyAdminController {
   async getAllCompanyPosts(
     @Query() object: { companyId: string },
   ): Promise<JobPost[]> {
-    if (!object.companyId)
+    if (!object.companyId || object.companyId == 'undefined')
       throw new HttpException('An Error occurred', HttpStatus.BAD_REQUEST);
     return this.companyAdminService.getAllCompanyPosts(object.companyId);
   }
 
   @Get('/getAJobPost')
   async getAJobPost(@Query() object: { jobId: string }): Promise<JobPost[]> {
-    if (!object.jobId)
+    if (!object.jobId || object.jobId == 'undefined')
       throw new HttpException('An Error occurred', HttpStatus.BAD_REQUEST);
     return this.companyAdminService.getAJobPost(object.jobId);
   }

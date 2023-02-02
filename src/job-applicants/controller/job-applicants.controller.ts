@@ -18,11 +18,21 @@ export class JobApplicantsController {
   async applyForJob(
     @Query() object: { jobId: string; userId: string },
   ): Promise<boolean> {
+    if (
+      !object.jobId ||
+      object.jobId == 'undefined' ||
+      !object.userId ||
+      object.userId == 'undefined'
+    )
+      throw new HttpException('An Error occurred', HttpStatus.BAD_REQUEST);
     return this.jobApplicantService.applyForJob(object.jobId, object.userId);
   }
 
   @Get('/getAllApplicants')
   async getAllApplicants(@Query() object: { jobId: string }): Promise<User[]> {
+    if (object.jobId == 'undefined' || !object.jobId)
+      throw new HttpException('An Error Occurred', HttpStatus.BAD_REQUEST);
+    console.log('hii');
     return this.jobApplicantService.getAllApplicants(object.jobId);
   }
 
@@ -30,7 +40,12 @@ export class JobApplicantsController {
   async rejectApplicant(
     @Query() object: { applicantId: string; jobId: string },
   ): Promise<boolean> {
-    if (!object.applicantId)
+    if (
+      !object.jobId ||
+      object.jobId == 'undefined' ||
+      !object.applicantId ||
+      object.applicantId == 'undefined'
+    )
       throw new HttpException('An Error occurred', HttpStatus.BAD_REQUEST);
     return this.jobApplicantService.rejectApplicant(
       object.applicantId,
@@ -42,7 +57,12 @@ export class JobApplicantsController {
   async acceptApplicant(
     @Query() object: { applicantId: string; jobId: string },
   ): Promise<boolean> {
-    if (!object.applicantId)
+    if (
+      !object.jobId ||
+      object.jobId == 'undefined' ||
+      !object.applicantId ||
+      object.applicantId == 'undefined'
+    )
       throw new HttpException('An Error occurred', HttpStatus.BAD_REQUEST);
     return this.jobApplicantService.acceptApplicant(
       object.applicantId,
