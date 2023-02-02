@@ -31,4 +31,6 @@ export class CreateUserDto {
   signInWith: string;
 
   accessToken:object;
+
+  _id:string
 }

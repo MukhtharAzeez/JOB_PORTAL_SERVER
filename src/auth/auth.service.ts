@@ -17,10 +17,10 @@ export class AuthService {
   ) {}
 
   // To create a JWT
-  async createToken(email: string, password: string) {
+  async createToken(email: string, _id: string) {
     const payLoad = {
       email,
-      password,
+      _id,
     };
     const secret = this.config.get('secret');
     const token = await this.jwt.signAsync(payLoad, {
@@ -35,7 +35,7 @@ export class AuthService {
   async createUser(createUserDto: CreateUserDto): Promise<any> {
     const result = await this.authRepository.create(createUserDto);
     if (result) {
-      const accessToken = await this.createToken(result.email, result.password);
+      const accessToken = await this.createToken(result.email, result._id);
       return {
         result,
         accessToken,
@@ -50,7 +50,7 @@ export class AuthService {
       createUserWithProvidersDto,
     );
     if (result) {
-      const accessToken = await this.createToken(result.email, result.password);
+      const accessToken = await this.createToken(result.email, result._id);
       return {
         result,
         accessToken,
@@ -67,7 +67,10 @@ export class AuthService {
   async loginUser(loginUserDto: LoginUserDto): Promise<any> {
     const result = await this.authRepository.loginUser(loginUserDto);
     if (result) {
-      const accessToken = await this.createToken(result.email, result.password);
+      const accessToken = await this.createToken(
+        result.email,
+        result._id.toString(),
+      );
       return {
         result,
         accessToken,
@@ -78,7 +81,10 @@ export class AuthService {
   async loginCompany(loginUserDto: LoginUserDto): Promise<any> {
     const result = await this.authRepository.loginCompany(loginUserDto);
     if (result) {
-      const accessToken = await this.createToken(result.email, result.password);
+      const accessToken = await this.createToken(
+        result.email,
+        result._id.toString(),
+      );
       return {
         result,
         accessToken,
@@ -89,7 +95,10 @@ export class AuthService {
   async loginCompanyAdmin(loginUserDto: LoginUserDto): Promise<any> {
     const result = await this.authRepository.loginCompanyAdmin(loginUserDto);
     if (result) {
-      const accessToken = await this.createToken(result.email, result.password);
+      const accessToken = await this.createToken(
+        result.email,
+        result._id.toString(),
+      );
       return {
         result,
         accessToken,

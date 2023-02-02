@@ -6,7 +6,9 @@ import {
   HttpStatus,
   Post,
   Query,
+  UseGuards,
 } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 import { User } from 'src/user/schemas/user.schema';
 import { JobApplicantsService } from '../service/job-applicants.service';
 
@@ -14,6 +16,7 @@ import { JobApplicantsService } from '../service/job-applicants.service';
 export class JobApplicantsController {
   constructor(private jobApplicantService: JobApplicantsService) {}
 
+  @UseGuards(AuthGuard('jwt'))
   @Get('/applyForJob')
   async applyForJob(
     @Query() object: { jobId: string; userId: string },
@@ -28,6 +31,7 @@ export class JobApplicantsController {
     return this.jobApplicantService.applyForJob(object.jobId, object.userId);
   }
 
+  @UseGuards(AuthGuard('jwt'))
   @Get('/getAllApplicants')
   async getAllApplicants(@Query() object: { jobId: string }): Promise<User[]> {
     if (object.jobId == 'undefined' || !object.jobId)
@@ -36,6 +40,7 @@ export class JobApplicantsController {
     return this.jobApplicantService.getAllApplicants(object.jobId);
   }
 
+  @UseGuards(AuthGuard('jwt'))
   @Get('/rejectApplicant')
   async rejectApplicant(
     @Query() object: { applicantId: string; jobId: string },
@@ -53,6 +58,7 @@ export class JobApplicantsController {
     );
   }
 
+  @UseGuards(AuthGuard('jwt'))
   @Get('/acceptApplicant')
   async acceptApplicant(
     @Query() object: { applicantId: string; jobId: string },
@@ -70,6 +76,7 @@ export class JobApplicantsController {
     );
   }
 
+  @UseGuards(AuthGuard('jwt'))
   @Post('/acceptApplicant')
   async acceptApplicantAndSchedule(
     @Body() formData: any,

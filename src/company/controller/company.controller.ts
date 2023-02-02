@@ -1,4 +1,5 @@
-import { Body, Controller, Get, Post, Query } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 import { CompanyAdminDto } from 'src/company-admin/dto/companyAdmin.dto';
 import { CompanyAdmin } from 'src/company-admin/schema/company-admin.schema';
 import { JobPost } from 'src/company-admin/schema/job-post-schema.schema';
@@ -8,6 +9,7 @@ import { CompanyService } from '../service/company.service';
 export class CompanyController {
   constructor(private companyService: CompanyService) {}
 
+  @UseGuards(AuthGuard('jwt'))
   @Post('/addAdmin')
   async addAdmin(
     @Body()
@@ -16,6 +18,7 @@ export class CompanyController {
     return this.companyService.addAdmin(companyAdminDto);
   }
 
+  @UseGuards(AuthGuard('jwt'))
   @Get('/getAllCompanyAdmins')
   async getAllCompanyAdmins(
     @Query() object: { companyId: string },
@@ -23,6 +26,7 @@ export class CompanyController {
     return this.companyService.getAllCompanyAdmins(object.companyId);
   }
 
+  @UseGuards(AuthGuard('jwt'))
   @Get('/getJobPosts')
   async getJobPosts(): Promise<JobPost[]> {
     return this.companyService.getJobPosts();

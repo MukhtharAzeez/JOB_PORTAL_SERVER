@@ -22,10 +22,6 @@ export class UserService {
     return this.userRepository.getUserByEmail(email);
   }
 
-  async applyForJob(jobId: string, userId: string): Promise<boolean> {
-    return this.userRepository.applyForJob(jobId, userId);
-  }
-
   async connectFriend(userId: string, friendId: string): Promise<boolean> {
     return this.userRepository.connectFriend(userId, friendId);
   }

@@ -8,14 +8,17 @@ import {
   HttpStatus,
   Post,
   Body,
+  UseGuards,
 } from '@nestjs/common';
 import { CompanyAdminService } from '../service/company-admin.service';
 import { AddAJobPost } from '../dto/addAJobPost.dto';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('companyAdmin')
 export class CompanyAdminController {
   constructor(private companyAdminService: CompanyAdminService) {}
 
+  @UseGuards(AuthGuard('jwt'))
   @Get('/profile')
   async getProfile(
     @Query() object: { adminId: string },
@@ -25,16 +28,19 @@ export class CompanyAdminController {
     return this.companyAdminService.getProfile(object.adminId);
   }
 
+  @UseGuards(AuthGuard('jwt'))
   @Post('/postJob')
   async addAJobPost(@Body() addAJobPost: AddAJobPost): Promise<JobPost> {
     return this.companyAdminService.addAJobPost(addAJobPost);
   }
 
+  @UseGuards(AuthGuard('jwt'))
   @Post('/editAJob')
   async editAJob(@Body() addAJobPost: AddAJobPost): Promise<JobPost> {
     return this.companyAdminService.editAJob(addAJobPost);
   }
 
+  @UseGuards(AuthGuard('jwt'))
   @Get('/getAllCompanyPosts')
   async getAllCompanyPosts(
     @Query() object: { companyId: string },
@@ -44,6 +50,7 @@ export class CompanyAdminController {
     return this.companyAdminService.getAllCompanyPosts(object.companyId);
   }
 
+  @UseGuards(AuthGuard('jwt'))
   @Get('/getAJobPost')
   async getAJobPost(@Query() object: { jobId: string }): Promise<JobPost[]> {
     if (!object.jobId || object.jobId == 'undefined')

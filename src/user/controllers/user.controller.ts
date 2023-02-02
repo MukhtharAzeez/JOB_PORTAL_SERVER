@@ -1,9 +1,10 @@
-import { HttpException, HttpStatus } from '@nestjs/common';
+import { HttpException, HttpStatus, UseGuards } from '@nestjs/common';
 import { UserService } from '../services/user.service';
 import { Body, Controller, Get, Post, Query } from '@nestjs/common';
 import { User } from 'src/user/schemas/user.schema';
 import { JwtService } from '@nestjs/jwt';
 import { UpdateUserDto } from '../dto/updateUser.dto';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('user')
 export class UserController {
@@ -22,6 +23,7 @@ export class UserController {
     return this.userService.getCurrentUserProfile(object.userId);
   }
 
+  @UseGuards(AuthGuard('jwt'))
   @Post('/updateProfile')
   async updateProfile(@Body() updateUserDto: UpdateUserDto): Promise<User> {
     if (!updateUserDto.userId)
@@ -29,23 +31,19 @@ export class UserController {
     return this.userService.updateProfile(updateUserDto);
   }
 
+  @UseGuards(AuthGuard('jwt'))
   @Get('/allUsers')
   async getAllUsers(): Promise<User[]> {
     return this.userService.getAllUsers();
   }
 
+  @UseGuards(AuthGuard('jwt'))
   @Get('/findByEmail')
   async getUserByEmail(@Query() email: { email: string }) {
     return this.userService.getUserByEmail(email.email);
   }
 
-  @Get('/applyForJob')
-  async applyForJob(
-    @Query() object: { jobId: string; userId: string },
-  ): Promise<boolean> {
-    return this.userService.applyForJob(object.jobId, object.userId);
-  }
-
+  @UseGuards(AuthGuard('jwt'))
   @Get('/sendFriendRequest')
   async sendFriendRequest(
     @Query() object: { userId: string; friendId: string },
@@ -53,6 +51,7 @@ export class UserController {
     return this.userService.connectFriend(object.userId, object.friendId);
   }
 
+  @UseGuards(AuthGuard('jwt'))
   @Get('/userFriends')
   async userFriends(@Query() object: { userId: string }): Promise<User[]> {
     if (object.userId == 'null')

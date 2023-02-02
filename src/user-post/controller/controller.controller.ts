@@ -11,9 +11,10 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { Query } from '@nestjs/common/decorators';
+import { Query, UseGuards } from '@nestjs/common/decorators';
 import { PostIdDto } from '../dto/postId.dto';
 import { PostCommentDto } from '../dto/postComment.dto';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('userPost')
 export class ControllerController {
@@ -22,25 +23,27 @@ export class ControllerController {
     private jwtService: JwtService,
   ) {}
 
+  @UseGuards(AuthGuard('jwt'))
   @Post('/addPost')
   @UsePipes(ValidationPipe)
-  async registerWithProviders(
-    @Body() userPostAddDto: UserPostAddDto,
-  ): Promise<UserPosts> {
+  async addPost(@Body() userPostAddDto: UserPostAddDto): Promise<UserPosts> {
     console.log(userPostAddDto);
     return this.userPostService.addPost(userPostAddDto);
   }
 
+  @UseGuards(AuthGuard('jwt'))
   @Get('/getPosts')
   async getAllPosts(): Promise<UserPosts[]> {
     return this.userPostService.getAllPosts();
   }
 
+  @UseGuards(AuthGuard('jwt'))
   @Get('/like')
   async likeAPost(@Query() postIdDto: PostIdDto): Promise<boolean> {
     return this.userPostService.likePost(postIdDto);
   }
 
+  @UseGuards(AuthGuard('jwt'))
   @Post('/comment')
   async commentAPost(
     @Body() postCommentDto: PostCommentDto,
@@ -48,6 +51,7 @@ export class ControllerController {
     return this.userPostService.commentPost(postCommentDto);
   }
 
+  @UseGuards(AuthGuard('jwt'))
   @Get('/getComments')
   async getComments(
     @Query() object: { postId: string },
@@ -55,6 +59,7 @@ export class ControllerController {
     return this.userPostService.getComments(object.postId);
   }
 
+  @UseGuards(AuthGuard('jwt'))
   @Get('/likeAComment')
   async likeAComment(
     @Query() object: { commentId: string; userId: string },

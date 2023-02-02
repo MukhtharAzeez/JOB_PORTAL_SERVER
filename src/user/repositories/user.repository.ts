@@ -70,36 +70,6 @@ export class UserRepository {
     return this.userModel.findOne({ email: email });
   }
 
-  async applyForJob(jobId: string, userId: string): Promise<boolean> {
-    // To check the user have a resume
-    const userResume = await this.userModel.findOne({ _id: userId });
-    if (userResume.resume.length == 0)
-      throw new HttpException(
-        'Please update your profile with your Resume !',
-        HttpStatus.BAD_REQUEST,
-      );
-    // To check the user is already applied or not
-    const alreadyApplied = await this.jobModel.findOne({
-      _id: jobId,
-      'applicants.user': { $in: [new Types.ObjectId(userId)] },
-    });
-    if (alreadyApplied)
-      throw new HttpException(
-        'You already applied to this Job !',
-        HttpStatus.BAD_REQUEST,
-      );
-    // To add the user as an applicant
-    await this.jobModel.updateOne(
-      { _id: jobId },
-      {
-        $push: {
-          applicants: { user: new Types.ObjectId(userId), accepted: null },
-        },
-      },
-    );
-    return true;
-  }
-
   async connectFriend(userId: string, friendId: string): Promise<boolean> {
     const alreadyConnected = await this.userModel.findOne({
       _id: userId,

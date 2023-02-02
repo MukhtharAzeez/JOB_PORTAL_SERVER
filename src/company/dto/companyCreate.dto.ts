@@ -1,5 +1,6 @@
 /* eslint-disable prettier/prettier */
 import { IsNotEmpty, IsEmail, MinLength, MaxLength } from 'class-validator';
+import { Types } from 'mongoose';
 
 export class CompanyCreateDto {
   @IsNotEmpty()
@@ -46,5 +47,6 @@ export class CompanyCreateDto {
   @MaxLength(12)
   confirmPassword: string;
 
-  approved:boolean
+  approved:boolean;
+  _id:Types.ObjectId;
 }
