@@ -14,8 +14,8 @@ export class UserPostService {
     return this.userPostRepository.addPost(userPostAddDto);
   }
 
-  async getAllPosts(): Promise<UserPosts[]> {
-    return this.userPostRepository.getAllPosts();
+  async getAllPosts(limit: number, skip: number): Promise<UserPosts[]> {
+    return this.userPostRepository.getAllPosts(limit, skip);
   }
 
   async likePost(postIdDto: PostIdDto): Promise<boolean> {

@@ -54,9 +54,11 @@ export class CompanyRepository {
     return this.companyAdminModel.find({ company: companyId });
   }
 
-  async getJobPosts(): Promise<JobPost[]> {
+  async getJobPosts(limit: number, skip: number): Promise<JobPost[]> {
     return this.jobPostModel
       .find({})
+      .skip(skip * limit)
+      .limit(limit)
       .populate('companyId')
       .sort({ createdAt: -1 });
   }

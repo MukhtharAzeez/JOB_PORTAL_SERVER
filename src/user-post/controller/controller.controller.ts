@@ -33,8 +33,10 @@ export class ControllerController {
 
   @UseGuards(AuthGuard('jwt'))
   @Get('/getPosts')
-  async getAllPosts(): Promise<UserPosts[]> {
-    return this.userPostService.getAllPosts();
+  async getAllPosts(
+    @Query() object: { limit: number; skip: number },
+  ): Promise<UserPosts[]> {
+    return this.userPostService.getAllPosts(object.limit, object.skip);
   }
 
   @UseGuards(AuthGuard('jwt'))

@@ -16,7 +16,7 @@ export class CompanyService {
     return this.companyRepository.getAllCompanyAdmins(companyId);
   }
 
-  async getJobPosts(): Promise<JobPost[]> {
-    return this.companyRepository.getJobPosts();
+  async getJobPosts(limit: number, skip: number): Promise<JobPost[]> {
+    return this.companyRepository.getJobPosts(limit, skip);
   }
 }

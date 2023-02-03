@@ -29,9 +29,11 @@ export class UserPostRepository {
   }
 
   // Fetch all Posts
-  async getAllPosts(): Promise<UserPosts[]> {
+  async getAllPosts(limit:number, skip:number): Promise<UserPosts[]> {
     const posts = await this.userPostModel
       .find({})
+      .skip(skip * limit)
+      .limit(limit)
       .populate('user')
       .sort({ createdAt: -1 });
     return posts;

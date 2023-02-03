@@ -18,7 +18,7 @@ export class CompanyController {
     return this.companyService.addAdmin(companyAdminDto);
   }
 
-  @UseGuards(AuthGuard('jwt'))
+  // @UseGuards(AuthGuard('jwt'))
   @Get('/getAllCompanyAdmins')
   async getAllCompanyAdmins(
     @Query() object: { companyId: string },
@@ -28,7 +28,9 @@ export class CompanyController {
 
   @UseGuards(AuthGuard('jwt'))
   @Get('/getJobPosts')
-  async getJobPosts(): Promise<JobPost[]> {
-    return this.companyService.getJobPosts();
+  async getJobPosts(
+    @Query() object: { limit: number; skip: number },
+  ): Promise<JobPost[]> {
+    return this.companyService.getJobPosts(object.limit, object.skip);
   }
 }
