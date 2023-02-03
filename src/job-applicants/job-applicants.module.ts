@@ -8,12 +8,17 @@ import {
   JobApplicantsSchema,
 } from './schema/job-applicants.schema';
 import { JobApplicantsService } from './service/job-applicants.service';
+import {
+  CompanyRequests,
+  CompanyRequestsSchema,
+} from 'src/requests/schema/companyRequests';
 
 @Module({
   imports: [
     MongooseModule.forFeature([
       { name: User.name, schema: UserSchema },
       { name: JobApplicant.name, schema: JobApplicantsSchema },
+      { name: CompanyRequests.name, schema: CompanyRequestsSchema },
     ]),
   ],
   controllers: [JobApplicantsController],

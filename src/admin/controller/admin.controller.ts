@@ -1,4 +1,4 @@
-import { Controller, Get, Query, HttpException } from '@nestjs/common';
+import { Controller, Get, Query, HttpException, Patch } from '@nestjs/common';
 import { BadGatewayException } from '@nestjs/common/exceptions';
 import { Company } from 'src/company/schema/company.schema';
 import { AdminService } from '../service/admin.service';
@@ -19,7 +19,7 @@ export class AdminController {
     return this.adminService.getCountCompanies();
   }
 
-  @Get('/approveCompany')
+  @Patch('/approveCompany')
   async approveCompany(
     @Query() object: { companyId: string },
   ): Promise<boolean> {

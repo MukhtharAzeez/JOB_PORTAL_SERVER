@@ -27,12 +27,14 @@ export class JobApplicantsService {
     applicantId: string,
     jobId: string,
     adminId: string,
+    companyId: string,
   ): Promise<boolean> {
     return this.jobApplicantRepository.acceptApplicantAndSchedule(
       formData,
       applicantId,
       jobId,
       adminId,
+      companyId,
     );
   }
 }

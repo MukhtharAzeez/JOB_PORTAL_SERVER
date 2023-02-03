@@ -4,6 +4,7 @@ import {
   Get,
   HttpException,
   HttpStatus,
+  Patch,
   Post,
   Query,
   UseGuards,
@@ -76,18 +77,34 @@ export class JobApplicantsController {
   }
 
   @UseGuards(AuthGuard('jwt'))
-  @Post('/acceptApplicant')
+  @Patch('/acceptApplicant')
   async acceptApplicantAndSchedule(
     @Body() formData: any,
-    @Query() object: { jobId: string; applicantId: string; adminId: string },
+    @Query()
+    object: {
+      jobId: string;
+      applicantId: string;
+      adminId: string;
+      companyId: string;
+    },
   ): Promise<boolean> {
-    if (!object.applicantId || !object.jobId || !object.adminId)
+    if (
+      !object.jobId ||
+      object.jobId == 'undefined' ||
+      !object.applicantId ||
+      object.applicantId == 'undefined' ||
+      !object.applicantId ||
+      object.applicantId == 'undefined' ||
+      !object.companyId ||
+      object.companyId == 'undefined'
+    )
       throw new HttpException('An Error occurred', HttpStatus.BAD_REQUEST);
     return this.jobApplicantService.acceptApplicantAndSchedule(
       formData,
       object.applicantId,
       object.jobId,
       object.adminId,
+      object.companyId,
     );
   }
 }

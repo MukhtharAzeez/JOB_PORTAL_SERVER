@@ -9,6 +9,7 @@ import {
   Post,
   Body,
   UseGuards,
+  Patch,
 } from '@nestjs/common';
 import { CompanyAdminService } from '../service/company-admin.service';
 import { AddAJobPost } from '../dto/addAJobPost.dto';
@@ -35,7 +36,7 @@ export class CompanyAdminController {
   }
 
   @UseGuards(AuthGuard('jwt'))
-  @Post('/editAJob')
+  @Patch('/editAJob')
   async editAJob(@Body() addAJobPost: AddAJobPost): Promise<JobPost> {
     return this.companyAdminService.editAJob(addAJobPost);
   }

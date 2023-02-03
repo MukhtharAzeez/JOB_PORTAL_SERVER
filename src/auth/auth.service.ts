@@ -24,7 +24,7 @@ export class AuthService {
     };
     const secret = this.config.get('secret');
     const token = await this.jwt.signAsync(payLoad, {
-      expiresIn: '1h',
+      expiresIn: '1day',
       secret: secret,
     });
     return {

@@ -1,3 +1,7 @@
+import {
+  CompanyRequests,
+  CompanyRequestsDocument,
+} from './../../requests/schema/companyRequests';
 import { JobApplicantDocument } from './../schema/job-applicants.schema';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
@@ -11,6 +15,8 @@ export class JobApplicantRepository {
     @InjectModel(JobApplicant.name)
     private jobApplicantModel: Model<JobApplicantDocument>,
     @InjectModel(User.name) private userModel: Model<UserDocument>,
+    @InjectModel(CompanyRequests.name)
+    private companyRequestsModel: Model<CompanyRequestsDocument>,
   ) {}
 
   async applyForJob(jobId: string, userId: string): Promise<boolean> {
@@ -75,14 +81,22 @@ export class JobApplicantRepository {
     applicantId: string,
     jobId: string,
     adminId: string,
+    companyId: string,
   ): Promise<boolean> {
-    // await this.companyAdminModel.findOne({
-    //   _id: adminId,
-    // });
-
     // Update the jobPost by applicant information if it is a online interview
     if (formData.onlineInterviewDate) {
       const { onlineInterviewDate, onlineInterviewTime } = formData;
+      console.log(onlineInterviewDate.length);
+      if (
+        new Date(onlineInterviewDate) < new Date() ||
+        onlineInterviewDate.length == 0 ||
+        onlineInterviewTime.length == 0
+      ) {
+        throw new HttpException(
+          'Please Provide a valid datas',
+          HttpStatus.BAD_REQUEST,
+        );
+      }
       await this.jobApplicantModel.updateOne(
         { jobId: jobId, applicantId: applicantId },
         {
@@ -99,6 +113,16 @@ export class JobApplicantRepository {
           },
         },
       );
+      const request = await this.companyRequestsModel.create({
+        company: companyId,
+        message: `Accepted and scheduled an online interview at ${onlineInterviewDate} ${onlineInterviewTime}`,
+        applicant: applicantId,
+        admin: adminId,
+        job: jobId,
+        accepted: null,
+      });
+      await request.save();
+      return true;
     }
 
     // Update the jobPost by applicant information if it is a offline interview
@@ -108,6 +132,17 @@ export class JobApplicantRepository {
         offlineInterviewTime,
         offlineInterviewPlace,
       } = formData;
+      if (
+        new Date(offlineInterviewDate) < new Date() ||
+        offlineInterviewTime.length ||
+        offlineInterviewDate.length ||
+        offlineInterviewPlace.length
+      ) {
+        throw new HttpException(
+          'Please Provide a valid datas',
+          HttpStatus.BAD_REQUEST,
+        );
+      }
       await this.jobApplicantModel.updateOne(
         { jobId: jobId, applicantId: applicantId },
         {
@@ -125,6 +160,16 @@ export class JobApplicantRepository {
           },
         },
       );
+      const request = await this.companyRequestsModel.create({
+        company: companyId,
+        message: `Accepted and scheduled an offline interview on ${offlineInterviewPlace} at ${offlineInterviewDate} ${offlineInterviewTime}`,
+        applicant: applicantId,
+        admin: adminId,
+        job: jobId,
+        accepted: null,
+      });
+      await request.save();
+      return true;
     }
     // Update the jobPost by applicant information if admin directly hire the user
     if (formData.directHire) {
@@ -142,7 +187,20 @@ export class JobApplicantRepository {
           },
         },
       );
+      const request = await this.companyRequestsModel.create({
+        company: companyId,
+        message: `Accepted and Decided to Hire This applicant for this job`,
+        applicant: applicantId,
+        admin: adminId,
+        job: jobId,
+        accepted: null,
+      });
+      await request.save();
+      return true;
     }
-    return true;
+    throw new HttpException(
+      'Please Provide a valid datas',
+      HttpStatus.BAD_REQUEST,
+    );
   }
 }
