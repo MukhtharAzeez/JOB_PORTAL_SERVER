@@ -1,4 +1,4 @@
-import { BadRequestException } from '@nestjs/common';
+import { BadRequestException, HttpException, HttpStatus } from '@nestjs/common';
 import { CompanyDocument } from '../schema/company.schema';
 import { Company } from '../schema/company.schema';
 import { Injectable } from '@nestjs/common';
@@ -14,6 +14,10 @@ import {
   JobPost,
   JobPostDocument,
 } from 'src/company-admin/schema/job-post-schema.schema';
+import {
+  CompanyRequests,
+  CompanyRequestsDocument,
+} from 'src/requests/schema/companyRequests';
 
 @Injectable()
 export class CompanyRepository {
@@ -23,6 +27,8 @@ export class CompanyRepository {
     private companyAdminModel: Model<CompanyAdminDocument>,
     @InjectModel(JobPost.name)
     private jobPostModel: Model<JobPostDocument>,
+    @InjectModel(CompanyRequests.name)
+    private companyRequestModel: Model<CompanyRequestsDocument>,
   ) {}
 
   async addAdmin(companyAdminDto: CompanyAdminDto): Promise<any> {
@@ -71,5 +77,16 @@ export class CompanyRepository {
       .limit(limit)
       .populate('companyId')
       .sort({ createdAt: -1 });
+  }
+
+  async getAllRequests(companyId: string): Promise<CompanyRequests[]> {
+    if (companyId == 'null') {
+      throw new HttpException('Please try again', HttpStatus.BAD_REQUEST);
+    }
+    return this.companyRequestModel
+      .find({ company: companyId })
+      .populate('company')
+      .populate('admin')
+      .populate('job');
   }
 }

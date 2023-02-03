@@ -3,6 +3,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { CompanyAdminDto } from 'src/company-admin/dto/companyAdmin.dto';
 import { CompanyAdmin } from 'src/company-admin/schema/company-admin.schema';
 import { JobPost } from 'src/company-admin/schema/job-post-schema.schema';
+import { CompanyRequests } from 'src/requests/schema/companyRequests';
 import { CompanyService } from '../service/company.service';
 
 @Controller('company')
@@ -43,5 +44,13 @@ export class CompanyController {
     @Query() object: { limit: number; skip: number },
   ): Promise<JobPost[]> {
     return this.companyService.getJobPosts(object.limit, object.skip);
+  }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Get('/getAllRequests')
+  async getAllRequests(
+    @Query() object: { companyId },
+  ): Promise<CompanyRequests[]> {
+    return this.companyService.getAllRequests(object.companyId);
   }
 }

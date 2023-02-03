@@ -21,7 +21,7 @@ export class CompanyRequests {
 
   @Prop({
     type: MongooseSchema.Types.ObjectId,
-    ref: 'JobPosts',
+    ref: 'JobPost',
     required: true,
   })
   job: Types.ObjectId;
@@ -35,13 +35,13 @@ export class CompanyRequests {
 
   @Prop({
     type: MongooseSchema.Types.ObjectId,
-    ref: 'CompanyAdmins',
+    ref: 'CompanyAdmin',
     required: true,
   })
   admin: Types.ObjectId;
 
   @Prop({})
-  accepted:boolean
+  accepted: boolean;
 }
 
 export const CompanyRequestsSchema = SchemaFactory.createForClass(CompanyRequests);

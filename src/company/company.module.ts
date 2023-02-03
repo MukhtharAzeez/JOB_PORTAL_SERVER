@@ -1,4 +1,8 @@
 import {
+  CompanyRequests,
+  CompanyRequestsSchema,
+} from 'src/requests/schema/companyRequests';
+import {
   JobPost,
   JobPostSchema,
 } from './../company-admin/schema/job-post-schema.schema';
@@ -15,11 +19,12 @@ import {
 
 @Module({
   imports: [
-    MongooseModule.forFeature([{ name: Company.name, schema: CompanySchema }]),
     MongooseModule.forFeature([
+      { name: Company.name, schema: CompanySchema },
       { name: CompanyAdmin.name, schema: CompanyAdminSchema },
+      { name: JobPost.name, schema: JobPostSchema },
+      { name: CompanyRequests.name, schema: CompanyRequestsSchema },
     ]),
-    MongooseModule.forFeature([{ name: JobPost.name, schema: JobPostSchema }]),
   ],
   controllers: [CompanyController],
   providers: [CompanyService, CompanyRepository],
