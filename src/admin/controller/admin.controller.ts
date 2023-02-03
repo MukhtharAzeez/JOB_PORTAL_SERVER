@@ -8,8 +8,15 @@ export class AdminController {
   constructor(private adminService: AdminService) {}
 
   @Get('/getAllCompanies')
-  async getAllCompanies(): Promise<Company[]> {
-    return this.adminService.getAllCompanies();
+  async getAllCompanies(
+    @Query() object: { skip: number; limit: number },
+  ): Promise<Company[]> {
+    return this.adminService.getAllCompanies(object.limit, object.skip);
+  }
+
+  @Get('/getCountCompanies')
+  async getCountCompanies(): Promise<number> {
+    return this.adminService.getCountCompanies();
   }
 
   @Get('/approveCompany')
@@ -23,7 +30,6 @@ export class AdminController {
   async getCompanyDetails(
     @Query() object: { companyId: string },
   ): Promise<Company> {
-    console.log(object);
     if (!object.companyId)
       throw new BadGatewayException('Check is there is any issues');
     return this.adminService.getCompanyDetails(object.companyId);

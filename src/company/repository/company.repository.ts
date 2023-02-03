@@ -4,7 +4,6 @@ import { Company } from '../schema/company.schema';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { CompanyCreateDto } from '../dto/companyCreate.dto';
 import * as argon2 from 'argon2';
 import {
   CompanyAdmin,
@@ -50,8 +49,19 @@ export class CompanyRepository {
     return newAdmin;
   }
 
-  async getAllCompanyAdmins(companyId: string): Promise<CompanyAdmin[]> {
-    return this.companyAdminModel.find({ company: companyId });
+  async getAllCompanyAdmins(
+    companyId: string,
+    limit: number,
+    skip: number,
+  ): Promise<CompanyAdmin[]> {
+    return this.companyAdminModel
+      .find({ company: companyId })
+      .skip(skip * limit)
+      .limit(limit);
+  }
+
+  async getCountCompanyAdmins(companyId: string): Promise<number> {
+    return this.companyAdminModel.find({ company: companyId }).count();
   }
 
   async getJobPosts(limit: number, skip: number): Promise<JobPost[]> {

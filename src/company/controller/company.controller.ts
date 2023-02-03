@@ -21,9 +21,20 @@ export class CompanyController {
   // @UseGuards(AuthGuard('jwt'))
   @Get('/getAllCompanyAdmins')
   async getAllCompanyAdmins(
-    @Query() object: { companyId: string },
+    @Query() object: { companyId: string; skip: number; limit: number },
   ): Promise<CompanyAdmin[]> {
-    return this.companyService.getAllCompanyAdmins(object.companyId);
+    return this.companyService.getAllCompanyAdmins(
+      object.companyId,
+      object.limit,
+      object.skip,
+    );
+  }
+
+  @Get('/getCountCompanyAdmins')
+  async getCountCompanyAdmins(
+    @Query() object: { companyId: string },
+  ): Promise<number> {
+    return this.companyService.getCountCompanyAdmins(object.companyId);
   }
 
   @UseGuards(AuthGuard('jwt'))

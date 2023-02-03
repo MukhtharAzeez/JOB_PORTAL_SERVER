@@ -12,8 +12,16 @@ export class CompanyService {
     return this.companyRepository.addAdmin(companyAdminDto);
   }
 
-  async getAllCompanyAdmins(companyId: string): Promise<CompanyAdmin[]> {
-    return this.companyRepository.getAllCompanyAdmins(companyId);
+  async getAllCompanyAdmins(
+    companyId: string,
+    limit: number,
+    skip: number,
+  ): Promise<CompanyAdmin[]> {
+    return this.companyRepository.getAllCompanyAdmins(companyId, limit, skip);
+  }
+
+  async getCountCompanyAdmins(companyId: string): Promise<number> {
+    return this.companyRepository.getCountCompanyAdmins(companyId);
   }
 
   async getJobPosts(limit: number, skip: number): Promise<JobPost[]> {

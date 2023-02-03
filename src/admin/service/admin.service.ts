@@ -6,8 +6,12 @@ import { AdminRepository } from '../repository/admin.repository';
 export class AdminService {
   constructor(private adminRepository: AdminRepository) {}
 
-  async getAllCompanies(): Promise<Company[]> {
-    return this.adminRepository.getAllCompanies();
+  async getAllCompanies(limit: number, skip: number): Promise<Company[]> {
+    return this.adminRepository.getAllCompanies(limit, skip);
+  }
+
+  async getCountCompanies(): Promise<number> {
+    return this.adminRepository.getCountCompanies();
   }
 
   async approveCompany(companyId): Promise<boolean> {

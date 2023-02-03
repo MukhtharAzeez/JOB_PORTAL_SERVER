@@ -35,7 +35,7 @@ export class CompanyCreateDto {
   udhyogAdhar: string;
 
   @IsNotEmpty()
-  fssaiLicense: string;
+  incorporation: string;
 
   @IsNotEmpty()
   @MinLength(8)
@@ -47,6 +47,6 @@ export class CompanyCreateDto {
   @MaxLength(12)
   confirmPassword: string;
 
-  approved:boolean;
-  _id:Types.ObjectId;
+  approved: boolean;
+  _id: Types.ObjectId;
 }

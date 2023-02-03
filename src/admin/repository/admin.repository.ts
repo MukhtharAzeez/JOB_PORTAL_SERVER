@@ -9,8 +9,15 @@ export class AdminRepository {
     @InjectModel(Company.name) private companyModel: Model<CompanyDocument>,
   ) {}
 
-  async getAllCompanies(): Promise<Company[]> {
-    return this.companyModel.find({});
+  async getAllCompanies(limit: number, skip: number): Promise<Company[]> {
+    return this.companyModel
+      .find({})
+      .skip(skip * limit)
+      .limit(limit);
+  }
+
+  async getCountCompanies(): Promise<number> {
+    return this.companyModel.find({}).count();
   }
 
   async approveCompany(companyId): Promise<boolean> {

@@ -36,7 +36,6 @@ export class JobApplicantsController {
   async getAllApplicants(@Query() object: { jobId: string }): Promise<User[]> {
     if (object.jobId == 'undefined' || !object.jobId)
       throw new HttpException('An Error Occurred', HttpStatus.BAD_REQUEST);
-    console.log('hii');
     return this.jobApplicantService.getAllApplicants(object.jobId);
   }
 
