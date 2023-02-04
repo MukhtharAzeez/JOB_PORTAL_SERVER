@@ -1,5 +1,5 @@
 import { JobPostDocument } from './../../company-admin/schema/job-post-schema.schema';
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { JobPost } from 'src/company-admin/schema/job-post-schema.schema';
@@ -8,6 +8,10 @@ import {
   UserRequests,
   UserRequestsDocument,
 } from 'src/requests/schema/userRequests.schema';
+import {
+  CompanyAdminRequests,
+  CompanyAdminRequestsDocument,
+} from 'src/requests/schema/companyAdminRequests';
 
 @Injectable()
 export class UserRepository {
@@ -16,6 +20,8 @@ export class UserRepository {
     @InjectModel(JobPost.name) private jobModel: Model<JobPostDocument>,
     @InjectModel(UserRequests.name)
     private userRequestModel: Model<UserRequestsDocument>,
+    @InjectModel(CompanyAdminRequests.name)
+    private CompanyAdminRequestModel: Model<CompanyAdminRequestsDocument>,
   ) {}
 
   async find(): Promise<User[]> {
@@ -158,5 +164,77 @@ export class UserRepository {
       .populate('company')
       .populate('job')
       .sort({ createdAt: -1 });
+  }
+
+  async userAcceptSchedule(requestId: string): Promise<boolean> {
+    const requestExist = await this.userRequestModel.findOne({
+      _id: requestId,
+    });
+    if (!requestExist) throw new BadRequestException('An Error Occurred');
+    await this.userRequestModel.updateOne(
+      { _id: requestId },
+      { $set: { accepted: true } },
+    );
+    const companyAdminRequestExist =
+      await this.CompanyAdminRequestModel.findOne({
+        job: requestExist.job,
+        applicant: requestExist.user,
+      });
+    if (companyAdminRequestExist) {
+      await this.CompanyAdminRequestModel.deleteOne({
+        job: requestExist.job,
+        applicant: requestExist.user,
+      });
+    }
+    const request = await this.CompanyAdminRequestModel.create({
+      company: requestExist.company,
+      message: requestExist.message,
+      applicant: requestExist.user,
+      job: requestExist.job,
+      admin: requestExist.admin,
+      userAccepted: true,
+      changeRequest: false,
+      companyApproved: true,
+      type: requestExist.type,
+    });
+    await request.save();
+    return true;
+  }
+
+  async userRejectSchedule(requestId: string): Promise<boolean> {
+    const requestExist = await this.userRequestModel.findOne({
+      _id: requestId,
+    });
+    if (!requestExist) throw new BadRequestException('An Error Occurred');
+    await this.userRequestModel.updateOne(
+      { _id: requestId },
+      { $set: { accepted: false } },
+    );
+
+    const companyAdminRequestExist =
+      await this.CompanyAdminRequestModel.findOne({
+        job: requestExist.job,
+        applicant: requestExist.user,
+      });
+    if (companyAdminRequestExist) {
+      await this.CompanyAdminRequestModel.deleteOne({
+        job: requestExist.job,
+        applicant: requestExist.user,
+      });
+    }
+
+    const request = await this.CompanyAdminRequestModel.create({
+      company: requestExist.company,
+      message: requestExist.message,
+      applicant: requestExist.user,
+      job: requestExist.job,
+      admin: requestExist.admin,
+      userAccepted: false,
+      changeRequest: false,
+      companyApproved: true,
+      type: requestExist.type,
+    });
+    await request.save();
+    return true;
   }
 }

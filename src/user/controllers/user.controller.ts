@@ -69,4 +69,25 @@ export class UserController {
       throw new HttpException('An Error occurred', HttpStatus.CONFLICT);
     return this.userService.getUserNotifications(object.userId);
   }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Get('/userAcceptSchedule')
+  async userAcceptSchedule(
+    @Query() object: { requestId: string },
+  ): Promise<boolean> {
+    console.log(object);
+    if (!object.requestId || object.requestId == 'undefined')
+      throw new HttpException('An Error occurred', HttpStatus.CONFLICT);
+    return this.userService.userAcceptSchedule(object.requestId);
+  }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Get('/userRejectSchedule')
+  async userRejectSchedule(
+    @Query() object: { requestId: string },
+  ): Promise<boolean> {
+    if (!object.requestId || object.requestId == 'undefined')
+      throw new HttpException('An Error occurred', HttpStatus.CONFLICT);
+    return this.userService.userRejectSchedule(object.requestId);
+  }
 }

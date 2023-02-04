@@ -138,8 +138,9 @@ export class CompanyRepository {
     const request = await this.userRequestsModel.create({
       company: requestCheck.company,
       message: requestCheck.message,
-      applicant: requestCheck.applicant,
+      user: requestCheck.applicant,
       job: requestCheck.job,
+      admin: requestCheck.admin,
       accepted: null,
       changeRequest: false,
       type: requestCheck.type,

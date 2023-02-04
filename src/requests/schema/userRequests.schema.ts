@@ -33,6 +33,13 @@ export class UserRequests {
   })
   job: Types.ObjectId;
 
+  @Prop({
+    type: MongooseSchema.Types.ObjectId,
+    ref: 'CompanyAdmin',
+    required: true,
+  })
+  admin: Types.ObjectId;
+
   @Prop({})
   accepted: boolean;
 

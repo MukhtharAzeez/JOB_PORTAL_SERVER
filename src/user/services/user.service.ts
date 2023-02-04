@@ -34,4 +34,12 @@ export class UserService {
   async getUserNotifications(userId: string): Promise<UserRequests[]> {
     return this.userRepository.getUserNotifications(userId);
   }
+
+  async userAcceptSchedule(requestId: string): Promise<boolean> {
+    return this.userRepository.userAcceptSchedule(requestId);
+  }
+
+  async userRejectSchedule(requestId: string): Promise<boolean> {
+    return this.userRepository.userRejectSchedule(requestId);
+  }
 }
