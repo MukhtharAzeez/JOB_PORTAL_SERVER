@@ -182,7 +182,7 @@ export class CompanyRepository {
       applicant: requestCheck.applicant,
       job: requestCheck.job,
       admin: requestCheck.admin,
-      adminAccepted: false,
+      companyApproved: false,
       type: requestCheck.type,
     });
     await request.save();

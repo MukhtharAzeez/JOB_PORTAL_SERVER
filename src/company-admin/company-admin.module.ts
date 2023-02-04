@@ -1,5 +1,9 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
+import {
+  CompanyAdminRequests,
+  CompanyAdminRequestsSchema,
+} from 'src/requests/schema/companyAdminRequests';
 import { CompanyAdminController } from './controller/company-admin.controller';
 import { CompanyAdminRepository } from './repository/company-admin.repository';
 import {
@@ -11,9 +15,10 @@ import { CompanyAdminService } from './service/company-admin.service';
 
 @Module({
   imports: [
-    MongooseModule.forFeature([{ name: JobPost.name, schema: JobPostSchema }]),
     MongooseModule.forFeature([
+      { name: JobPost.name, schema: JobPostSchema },
       { name: CompanyAdmin.name, schema: CompanyAdminSchema },
+      { name: CompanyAdminRequests.name, schema: CompanyAdminRequestsSchema },
     ]),
   ],
   controllers: [CompanyAdminController],

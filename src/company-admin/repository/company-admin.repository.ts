@@ -1,13 +1,17 @@
 import { JobPostDocument } from './../schema/job-post-schema.schema';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types } from 'mongoose';
+import { Model } from 'mongoose';
 import { AddAJobPost } from '../dto/addAJobPost.dto';
 import {
   CompanyAdmin,
   CompanyAdminDocument,
 } from '../schema/company-admin.schema';
 import { JobPost } from '../schema/job-post-schema.schema';
+import {
+  CompanyAdminRequests,
+  CompanyAdminRequestsDocument,
+} from 'src/requests/schema/companyAdminRequests';
 // import { Schema as MongooseSchema, Types } from 'mongoose';
 
 @Injectable()
@@ -17,6 +21,8 @@ export class CompanyAdminRepository {
     private companyAdminModel: Model<CompanyAdminDocument>,
     @InjectModel(JobPost.name)
     private jobPostModel: Model<JobPostDocument>,
+    @InjectModel(CompanyAdminRequests.name)
+    private companyAdminRequests: Model<CompanyAdminRequestsDocument>,
   ) {}
 
   async getProfile(adminId: string): Promise<CompanyAdmin> {
@@ -65,5 +71,15 @@ export class CompanyAdminRepository {
 
   async getAJobPost(jobId: string): Promise<JobPost[]> {
     return this.jobPostModel.findOne({ _id: jobId });
+  }
+
+  async getCompanyAdminRequests(
+    companyAdminId: string,
+  ): Promise<CompanyAdminRequests[]> {
+    return this.companyAdminRequests
+      .find({ admin: companyAdminId })
+      .populate('applicant')
+      .populate('job')
+      .sort({ createdAt: -1 });
   }
 }

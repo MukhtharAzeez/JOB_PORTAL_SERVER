@@ -44,7 +44,7 @@ export class CompanyAdminRequests {
   type: string;
 
   @Prop({ required: true })
-  adminAccepted: boolean;
+  companyApproved: boolean;
 }
 
 export const CompanyAdminRequestsSchema = SchemaFactory.createForClass(CompanyAdminRequests);

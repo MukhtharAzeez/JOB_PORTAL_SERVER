@@ -1,15 +1,21 @@
 import { JobPostDocument } from './../../company-admin/schema/job-post-schema.schema';
-import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { JobPost } from 'src/company-admin/schema/job-post-schema.schema';
 import { User, UserDocument } from '../schemas/user.schema';
+import {
+  UserRequests,
+  UserRequestsDocument,
+} from 'src/requests/schema/userRequests.schema';
 
 @Injectable()
 export class UserRepository {
   constructor(
     @InjectModel(User.name) private userModel: Model<UserDocument>,
     @InjectModel(JobPost.name) private jobModel: Model<JobPostDocument>,
+    @InjectModel(UserRequests.name)
+    private userRequestModel: Model<UserRequestsDocument>,
   ) {}
 
   async find(): Promise<User[]> {
@@ -144,5 +150,13 @@ export class UserRepository {
       },
     ]);
     return friends;
+  }
+
+  async getUserNotifications(userId: string): Promise<UserRequests[]> {
+    return this.userRequestModel
+      .find({ user: userId })
+      .populate('company')
+      .populate('job')
+      .sort({ createdAt: -1 });
   }
 }

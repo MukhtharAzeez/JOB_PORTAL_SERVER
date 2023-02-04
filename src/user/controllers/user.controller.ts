@@ -5,6 +5,7 @@ import { User } from 'src/user/schemas/user.schema';
 import { JwtService } from '@nestjs/jwt';
 import { UpdateUserDto } from '../dto/updateUser.dto';
 import { AuthGuard } from '@nestjs/passport';
+import { UserRequests } from 'src/requests/schema/userRequests.schema';
 
 @Controller('user')
 export class UserController {
@@ -57,5 +58,15 @@ export class UserController {
     if (object.userId == 'null')
       throw new HttpException('Ann error occurred', HttpStatus.ACCEPTED);
     return this.userService.userFriends(object.userId);
+  }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Get('/getUserNotifications')
+  async getUserNotifications(
+    @Query() object: { userId: string },
+  ): Promise<UserRequests[]> {
+    if (!object.userId || object.userId == 'undefined')
+      throw new HttpException('An Error occurred', HttpStatus.CONFLICT);
+    return this.userService.getUserNotifications(object.userId);
   }
 }

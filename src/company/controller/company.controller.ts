@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Get,
@@ -57,8 +58,14 @@ export class CompanyController {
   @UseGuards(AuthGuard('jwt'))
   @Get('/getAllRequests')
   async getAllRequests(
-    @Query() object: { companyId },
+    @Query() object: { companyId: string },
   ): Promise<CompanyRequests[]> {
+    if (
+      object.companyId === undefined ||
+      !object.companyId ||
+      object.companyId === 'null'
+    )
+      throw new BadRequestException('An Error has Occurred');
     return this.companyService.getAllRequests(object.companyId);
   }
 

@@ -1,4 +1,5 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { CompanyAdminRequests } from 'src/requests/schema/companyAdminRequests';
 import { AddAJobPost } from '../dto/addAJobPost.dto';
 import { CompanyAdminRepository } from '../repository/company-admin.repository';
 import { CompanyAdmin } from '../schema/company-admin.schema';
@@ -27,5 +28,11 @@ export class CompanyAdminService {
 
   async getAJobPost(jobId: string): Promise<JobPost[]> {
     return this.companyAdminRepository.getAJobPost(jobId);
+  }
+
+  async getCompanyAdminRequests(
+    companyAdminId: string,
+  ): Promise<CompanyAdminRequests[]> {
+    return this.companyAdminRepository.getCompanyAdminRequests(companyAdminId);
   }
 }

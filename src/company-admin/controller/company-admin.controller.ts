@@ -14,6 +14,7 @@ import {
 import { CompanyAdminService } from '../service/company-admin.service';
 import { AddAJobPost } from '../dto/addAJobPost.dto';
 import { AuthGuard } from '@nestjs/passport';
+import { CompanyAdminRequests } from 'src/requests/schema/companyAdminRequests';
 
 @Controller('companyAdmin')
 export class CompanyAdminController {
@@ -57,5 +58,17 @@ export class CompanyAdminController {
     if (!object.jobId || object.jobId == 'undefined')
       throw new HttpException('An Error occurred', HttpStatus.BAD_REQUEST);
     return this.companyAdminService.getAJobPost(object.jobId);
+  }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Get('/getCompanyAdminRequests')
+  async getCompanyAdminRequests(
+    @Query() object: { companyAdminId: string },
+  ): Promise<CompanyAdminRequests[]> {
+    if (!object.companyAdminId || object.companyAdminId == 'undefined')
+      throw new HttpException('An Error occurred', HttpStatus.CONFLICT);
+    return this.companyAdminService.getCompanyAdminRequests(
+      object.companyAdminId,
+    );
   }
 }

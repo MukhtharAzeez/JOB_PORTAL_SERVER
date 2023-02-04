@@ -9,12 +9,17 @@ import { UserController } from './controllers/user.controller';
 import { UserService } from './services/user.service';
 import { UserRepository } from './repositories/user.repository';
 import { JwtModule } from '@nestjs/jwt/dist';
+import {
+  UserRequests,
+  UserRequestsSchema,
+} from 'src/requests/schema/userRequests.schema';
 
 @Module({
   imports: [
     MongooseModule.forFeature([
       { name: User.name, schema: UserSchema },
       { name: JobPost.name, schema: JobPostSchema },
+      { name: UserRequests.name, schema: UserRequestsSchema },
     ]),
     JwtModule.register({
       secret: 'secret',

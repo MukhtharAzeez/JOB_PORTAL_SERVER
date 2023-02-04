@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { UserRequests } from 'src/requests/schema/userRequests.schema';
 import { UserRepository } from 'src/user/repositories/user.repository';
 import { User } from 'src/user/schemas/user.schema';
 
@@ -28,5 +29,9 @@ export class UserService {
 
   async userFriends(userId: string): Promise<User[]> {
     return this.userRepository.userFriends(userId);
+  }
+
+  async getUserNotifications(userId: string): Promise<UserRequests[]> {
+    return this.userRepository.getUserNotifications(userId);
   }
 }

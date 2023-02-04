@@ -17,7 +17,7 @@ export class UserRequests {
     ref: 'User',
     required: true,
   })
-  applicant: Types.ObjectId;
+  user: Types.ObjectId;
 
   @Prop({
     type: MongooseSchema.Types.ObjectId,
