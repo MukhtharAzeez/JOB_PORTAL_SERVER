@@ -1,4 +1,8 @@
 import {
+  JobApplicant,
+  JobApplicantsSchema,
+} from './../job-applicants/schema/job-applicants.schema';
+import {
   CompanyRequests,
   CompanyRequestsSchema,
 } from 'src/requests/schema/companyRequests';
@@ -16,6 +20,14 @@ import {
   CompanyAdmin,
   CompanyAdminSchema,
 } from 'src/company-admin/schema/company-admin.schema';
+import {
+  UserRequests,
+  UserRequestsSchema,
+} from 'src/requests/schema/userRequests.schema';
+import {
+  CompanyAdminRequests,
+  CompanyAdminRequestsSchema,
+} from 'src/requests/schema/companyAdminRequests';
 
 @Module({
   imports: [
@@ -24,6 +36,9 @@ import {
       { name: CompanyAdmin.name, schema: CompanyAdminSchema },
       { name: JobPost.name, schema: JobPostSchema },
       { name: CompanyRequests.name, schema: CompanyRequestsSchema },
+      { name: JobApplicant.name, schema: JobApplicantsSchema },
+      { name: UserRequests.name, schema: UserRequestsSchema },
+      { name: CompanyAdminRequests.name, schema: CompanyAdminRequestsSchema },
     ]),
   ],
   controllers: [CompanyController],

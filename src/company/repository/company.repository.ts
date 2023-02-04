@@ -1,3 +1,4 @@
+import { JobApplicantDocument } from './../../job-applicants/schema/job-applicants.schema';
 import { BadRequestException, HttpException, HttpStatus } from '@nestjs/common';
 import { CompanyDocument } from '../schema/company.schema';
 import { Company } from '../schema/company.schema';
@@ -18,6 +19,15 @@ import {
   CompanyRequests,
   CompanyRequestsDocument,
 } from 'src/requests/schema/companyRequests';
+import { JobApplicant } from 'src/job-applicants/schema/job-applicants.schema';
+import {
+  UserRequests,
+  UserRequestsDocument,
+} from 'src/requests/schema/userRequests.schema';
+import {
+  CompanyAdminRequests,
+  CompanyAdminRequestsDocument,
+} from 'src/requests/schema/companyAdminRequests';
 
 @Injectable()
 export class CompanyRepository {
@@ -29,6 +39,12 @@ export class CompanyRepository {
     private jobPostModel: Model<JobPostDocument>,
     @InjectModel(CompanyRequests.name)
     private companyRequestModel: Model<CompanyRequestsDocument>,
+    @InjectModel(JobApplicant.name)
+    private jobApplicantModel: Model<JobApplicantDocument>,
+    @InjectModel(UserRequests.name)
+    private userRequestsModel: Model<UserRequestsDocument>,
+    @InjectModel(CompanyAdminRequests.name)
+    private companyAdminRequestsModel: Model<CompanyAdminRequestsDocument>,
   ) {}
 
   async addAdmin(companyAdminDto: CompanyAdminDto): Promise<any> {
@@ -87,6 +103,100 @@ export class CompanyRepository {
       .find({ company: companyId })
       .populate('company')
       .populate('admin')
-      .populate('job');
+      .populate('job')
+      .populate('applicant')
+      .sort({ createdAt: -1 });
+  }
+
+  async acceptSchedule(companyRequestId: string): Promise<boolean> {
+    const requestCheck = await this.companyRequestModel.findOne({
+      _id: companyRequestId,
+    });
+    if (!requestCheck)
+      throw new HttpException('An Error Occurred', HttpStatus.BAD_REQUEST);
+    await this.companyRequestModel.updateOne(
+      {
+        _id: companyRequestId,
+      },
+      {
+        $set: {
+          accepted: true,
+        },
+      },
+    );
+    await this.jobApplicantModel.updateOne(
+      {
+        jobId: requestCheck.job,
+        applicantId: requestCheck.applicant,
+      },
+      {
+        $set: {
+          [requestCheck.type + '.companyApproved']: true,
+        },
+      },
+    );
+    const request = await this.userRequestsModel.create({
+      company: requestCheck.company,
+      message: requestCheck.message,
+      applicant: requestCheck.applicant,
+      job: requestCheck.job,
+      accepted: null,
+      changeRequest: false,
+      type: requestCheck.type,
+    });
+    await request.save();
+    return true;
+  }
+
+  async rejectSchedule(companyRequestId: string): Promise<boolean> {
+    const requestCheck = await this.companyRequestModel.findOne({
+      _id: companyRequestId,
+    });
+    if (!requestCheck)
+      throw new HttpException('An Error Occurred', HttpStatus.BAD_REQUEST);
+    await this.companyRequestModel.updateOne(
+      {
+        _id: companyRequestId,
+      },
+      {
+        $set: {
+          accepted: false,
+        },
+      },
+    );
+    await this.jobApplicantModel.updateOne(
+      {
+        jobId: requestCheck.job,
+        applicantId: requestCheck.applicant,
+      },
+      {
+        $set: {
+          [requestCheck.type + '.companyApproved']: false,
+        },
+      },
+    );
+
+    const request = await this.companyAdminRequestsModel.create({
+      company: requestCheck.company,
+      message: requestCheck.message,
+      applicant: requestCheck.applicant,
+      job: requestCheck.job,
+      admin: requestCheck.admin,
+      adminAccepted: false,
+      type: requestCheck.type,
+    });
+    await request.save();
+
+    const userGetRequest = await this.userRequestsModel.findOne({
+      company: requestCheck.company,
+      job: requestCheck.job,
+    });
+    if (userGetRequest) {
+      await this.userRequestsModel.deleteOne({
+        company: requestCheck.company,
+        job: requestCheck.job,
+      });
+    }
+    return true;
   }
 }

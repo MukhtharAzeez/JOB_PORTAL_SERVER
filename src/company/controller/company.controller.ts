@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Patch,
+  Post,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { CompanyAdminDto } from 'src/company-admin/dto/companyAdmin.dto';
 import { CompanyAdmin } from 'src/company-admin/schema/company-admin.schema';
@@ -52,5 +60,27 @@ export class CompanyController {
     @Query() object: { companyId },
   ): Promise<CompanyRequests[]> {
     return this.companyService.getAllRequests(object.companyId);
+  }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Patch('/acceptSchedule')
+  async acceptSchedule(
+    @Body()
+    object: {
+      companyRequestId: string;
+    },
+  ): Promise<boolean> {
+    return this.companyService.acceptSchedule(object.companyRequestId);
+  }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Patch('/rejectSchedule')
+  async rejectSchedule(
+    @Body()
+    object: {
+      companyRequestId: string;
+    },
+  ): Promise<boolean> {
+    return this.companyService.rejectSchedule(object.companyRequestId);
   }
 }

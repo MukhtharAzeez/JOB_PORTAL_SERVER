@@ -32,4 +32,12 @@ export class CompanyService {
   async getAllRequests(companyId): Promise<CompanyRequests[]> {
     return this.companyRepository.getAllRequests(companyId);
   }
+
+  async acceptSchedule(companyRequestId: string): Promise<boolean> {
+    return this.companyRepository.acceptSchedule(companyRequestId);
+  }
+
+  async rejectSchedule(companyRequestId: string): Promise<boolean> {
+    return this.companyRepository.rejectSchedule(companyRequestId);
+  }
 }

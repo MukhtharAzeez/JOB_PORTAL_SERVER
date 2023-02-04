@@ -86,14 +86,13 @@ export class JobApplicantRepository {
     // Update the jobPost by applicant information if it is a online interview
     if (formData.onlineInterviewDate) {
       const { onlineInterviewDate, onlineInterviewTime } = formData;
-      console.log(onlineInterviewDate.length);
       if (
         new Date(onlineInterviewDate) < new Date() ||
         onlineInterviewDate.length == 0 ||
         onlineInterviewTime.length == 0
       ) {
         throw new HttpException(
-          'Please Provide a valid datas',
+          'Please Provide valid datas',
           HttpStatus.BAD_REQUEST,
         );
       }
@@ -106,7 +105,7 @@ export class JobApplicantRepository {
               date: onlineInterviewDate,
               time: onlineInterviewTime,
               completed: false,
-              adminApproved: false,
+              companyApproved: false,
               userAccepted: false,
               scheduledAdmin: new Types.ObjectId(adminId),
             },
@@ -115,11 +114,12 @@ export class JobApplicantRepository {
       );
       const request = await this.companyRequestsModel.create({
         company: companyId,
-        message: `Accepted and scheduled an online interview at ${onlineInterviewDate} ${onlineInterviewTime}`,
+        message: `Accepted and scheduled an online interview at ${onlineInterviewDate} ${onlineInterviewTime} for Applicant`,
         applicant: applicantId,
         admin: adminId,
         job: jobId,
         accepted: null,
+        type: 'online',
       });
       await request.save();
       return true;
@@ -134,12 +134,12 @@ export class JobApplicantRepository {
       } = formData;
       if (
         new Date(offlineInterviewDate) < new Date() ||
-        offlineInterviewTime.length ||
-        offlineInterviewDate.length ||
-        offlineInterviewPlace.length
+        !offlineInterviewDate.length ||
+        !offlineInterviewTime.length ||
+        !offlineInterviewPlace.length
       ) {
         throw new HttpException(
-          'Please Provide a valid datas',
+          'Please Provide valid datas',
           HttpStatus.BAD_REQUEST,
         );
       }
@@ -153,7 +153,7 @@ export class JobApplicantRepository {
               time: offlineInterviewTime,
               place: offlineInterviewPlace,
               completed: false,
-              adminApproved: false,
+              companyApproved: false,
               userAccepted: false,
               scheduledAdmin: new Types.ObjectId(adminId),
             },
@@ -162,11 +162,12 @@ export class JobApplicantRepository {
       );
       const request = await this.companyRequestsModel.create({
         company: companyId,
-        message: `Accepted and scheduled an offline interview on ${offlineInterviewPlace} at ${offlineInterviewDate} ${offlineInterviewTime}`,
+        message: `Accepted and scheduled an offline interview on ${offlineInterviewPlace} at ${offlineInterviewDate} ${offlineInterviewTime} for Applicant`,
         applicant: applicantId,
         admin: adminId,
         job: jobId,
         accepted: null,
+        type: 'offline',
       });
       await request.save();
       return true;
@@ -180,7 +181,7 @@ export class JobApplicantRepository {
             accepted: true,
             hired: {
               hire: true,
-              adminApproved: false,
+              companyApproved: false,
               userAccepted: false,
               hiredAdmin: new Types.ObjectId(adminId),
             },
@@ -194,12 +195,13 @@ export class JobApplicantRepository {
         admin: adminId,
         job: jobId,
         accepted: null,
+        type: 'hire',
       });
       await request.save();
       return true;
     }
     throw new HttpException(
-      'Please Provide a valid datas',
+      'Please Provide valid datas',
       HttpStatus.BAD_REQUEST,
     );
   }

@@ -42,6 +42,9 @@ export class CompanyRequests {
 
   @Prop({})
   accepted: boolean;
+
+  @Prop({ required: true })
+  type: string;
 }
 
 export const CompanyRequestsSchema = SchemaFactory.createForClass(CompanyRequests);
