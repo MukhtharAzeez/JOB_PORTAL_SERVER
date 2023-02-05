@@ -82,4 +82,12 @@ export class CompanyAdminRepository {
       .populate('job')
       .sort({ createdAt: -1 });
   }
+
+  async updateRequest(requestId: string): Promise<boolean> {
+    await this.companyAdminRequests.updateOne(
+      { _id: requestId },
+      { $set: { reSchedule: true } },
+    );
+    return true;
+  }
 }

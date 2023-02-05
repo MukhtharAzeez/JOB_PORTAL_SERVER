@@ -71,4 +71,14 @@ export class CompanyAdminController {
       object.companyAdminId,
     );
   }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Get('/updateRequest')
+  async updateRequest(
+    @Query() object: { requestId: string },
+  ): Promise<boolean> {
+    if (!object.requestId || object.requestId == 'undefined')
+      throw new HttpException('An Error occurred', HttpStatus.CONFLICT);
+    return this.companyAdminService.updateRequest(object.requestId);
+  }
 }

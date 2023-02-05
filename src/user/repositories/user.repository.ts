@@ -230,7 +230,43 @@ export class UserRepository {
       job: requestExist.job,
       admin: requestExist.admin,
       userAccepted: false,
-      changeRequest: false,
+      userRequestToChange: false,
+      companyApproved: true,
+      type: requestExist.type,
+    });
+    await request.save();
+    return true;
+  }
+  async userRequestToChangeTime(requestId: string): Promise<boolean> {
+    const requestExist = await this.userRequestModel.findOne({
+      _id: requestId,
+    });
+    if (!requestExist) throw new BadRequestException('An Error Occurred');
+    await this.userRequestModel.updateOne(
+      { _id: requestId },
+      { $set: { accepted: null, changeRequest: true } },
+    );
+
+    const companyAdminRequestExist =
+      await this.CompanyAdminRequestModel.findOne({
+        job: requestExist.job,
+        applicant: requestExist.user,
+      });
+    if (companyAdminRequestExist) {
+      await this.CompanyAdminRequestModel.deleteOne({
+        job: requestExist.job,
+        applicant: requestExist.user,
+      });
+    }
+
+    const request = await this.CompanyAdminRequestModel.create({
+      company: requestExist.company,
+      message: requestExist.message,
+      applicant: requestExist.user,
+      job: requestExist.job,
+      admin: requestExist.admin,
+      userAccepted: false,
+      userRequestToChange: true,
       companyApproved: true,
       type: requestExist.type,
     });

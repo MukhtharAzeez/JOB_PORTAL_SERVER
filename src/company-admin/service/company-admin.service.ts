@@ -35,4 +35,8 @@ export class CompanyAdminService {
   ): Promise<CompanyAdminRequests[]> {
     return this.companyAdminRepository.getCompanyAdminRequests(companyAdminId);
   }
+
+  async updateRequest(requestId: string): Promise<boolean> {
+    return this.companyAdminRepository.updateRequest(requestId);
+  }
 }

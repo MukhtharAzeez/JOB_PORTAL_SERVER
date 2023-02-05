@@ -46,8 +46,11 @@ export class CompanyAdminRequests {
   @Prop({ required: true })
   userAccepted: boolean;
 
-  @Prop({ })
+  @Prop({})
   userRequestToChange: boolean;
+
+  @Prop({})
+  reScheduled: boolean;
 
   @Prop({ required: true })
   companyApproved: boolean;

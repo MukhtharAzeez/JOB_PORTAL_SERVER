@@ -112,6 +112,28 @@ export class JobApplicantRepository {
           },
         },
       );
+      // Check it is reScheduled,  uf it is update the request
+      const requestExist = await this.companyRequestsModel.findOne({
+        job: jobId,
+        applicant: applicantId,
+      });
+      if (requestExist) {
+        await this.companyRequestsModel.deleteOne({
+          job: jobId,
+          applicant: applicantId,
+        });
+        const request = await this.companyRequestsModel.create({
+          company: companyId,
+          message: `Accepted and rescheduled an online interview according to applicant request at ${onlineInterviewDate} ${onlineInterviewTime} for Applicant`,
+          applicant: applicantId,
+          admin: adminId,
+          job: jobId,
+          accepted: null,
+          type: 'offline',
+        });
+        await request.save();
+        return true;
+      }
       const request = await this.companyRequestsModel.create({
         company: companyId,
         message: `Accepted and scheduled an online interview at ${onlineInterviewDate} ${onlineInterviewTime} for Applicant`,
@@ -160,6 +182,27 @@ export class JobApplicantRepository {
           },
         },
       );
+      const requestExist = await this.companyRequestsModel.findOne({
+        job: jobId,
+        applicant: applicantId,
+      });
+      if (requestExist) {
+        await this.companyRequestsModel.deleteOne({
+          job: jobId,
+          applicant: applicantId,
+        });
+        const request = await this.companyRequestsModel.create({
+          company: companyId,
+          message: `Accepted and rescheduled an offline interview according to applicant request on ${offlineInterviewPlace} at ${offlineInterviewDate} ${offlineInterviewTime} for Applicant`,
+          applicant: applicantId,
+          admin: adminId,
+          job: jobId,
+          accepted: null,
+          type: 'offline',
+        });
+        await request.save();
+        return true;
+      }
       const request = await this.companyRequestsModel.create({
         company: companyId,
         message: `Accepted and scheduled an offline interview on ${offlineInterviewPlace} at ${offlineInterviewDate} ${offlineInterviewTime} for Applicant`,

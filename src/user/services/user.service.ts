@@ -42,4 +42,8 @@ export class UserService {
   async userRejectSchedule(requestId: string): Promise<boolean> {
     return this.userRepository.userRejectSchedule(requestId);
   }
+
+  async userRequestToChangeTime(requestId: string): Promise<boolean> {
+    return this.userRepository.userRequestToChangeTime(requestId);
+  }
 }

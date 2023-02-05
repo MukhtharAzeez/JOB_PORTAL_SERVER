@@ -90,4 +90,14 @@ export class UserController {
       throw new HttpException('An Error occurred', HttpStatus.CONFLICT);
     return this.userService.userRejectSchedule(object.requestId);
   }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Get('/userRequestToChangeTime')
+  async userRequestToChangeTime(
+    @Query() object: { requestId: string },
+  ): Promise<boolean> {
+    if (!object.requestId || object.requestId == 'undefined')
+      throw new HttpException('An Error occurred', HttpStatus.CONFLICT);
+    return this.userService.userRequestToChangeTime(object.requestId);
+  }
 }
