@@ -12,6 +12,10 @@ import {
   CompanyAdminRequests,
   CompanyAdminRequestsDocument,
 } from 'src/requests/schema/companyAdminRequests';
+import {
+  JobApplicant,
+  JobApplicantDocument,
+} from 'src/job-applicants/schema/job-applicants.schema';
 
 @Injectable()
 export class UserRepository {
@@ -22,6 +26,8 @@ export class UserRepository {
     private userRequestModel: Model<UserRequestsDocument>,
     @InjectModel(CompanyAdminRequests.name)
     private CompanyAdminRequestModel: Model<CompanyAdminRequestsDocument>,
+    @InjectModel(JobApplicant.name)
+    private jobApplicantModel: Model<JobApplicantDocument>,
   ) {}
 
   async find(): Promise<User[]> {
@@ -175,6 +181,12 @@ export class UserRepository {
       { _id: requestId },
       { $set: { accepted: true } },
     );
+
+    await this.jobApplicantModel.updateOne(
+      { jobId: requestExist.job, applicantId: requestExist.user },
+      { $set: { [requestExist.type + '.userAccepted']: true } },
+    );
+
     const companyAdminRequestExist =
       await this.CompanyAdminRequestModel.findOne({
         job: requestExist.job,

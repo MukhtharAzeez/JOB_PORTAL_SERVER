@@ -11,7 +11,7 @@ export type JobApplicantDocument = HydratedDocument<JobApplicant>;
 export class JobApplicant {
   @Prop({
     type: MongooseSchema.Types.ObjectId,
-    ref: 'JobPosts',
+    ref: 'JobPost',
     required: true,
   })
   jobId: Types.ObjectId;

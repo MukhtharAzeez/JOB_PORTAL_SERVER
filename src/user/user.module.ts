@@ -17,6 +17,10 @@ import {
   CompanyAdminRequests,
   CompanyAdminRequestsSchema,
 } from 'src/requests/schema/companyAdminRequests';
+import {
+  JobApplicant,
+  JobApplicantsSchema,
+} from 'src/job-applicants/schema/job-applicants.schema';
 
 @Module({
   imports: [
@@ -25,6 +29,7 @@ import {
       { name: JobPost.name, schema: JobPostSchema },
       { name: UserRequests.name, schema: UserRequestsSchema },
       { name: CompanyAdminRequests.name, schema: CompanyAdminRequestsSchema },
+      { name: JobApplicant.name, schema: JobApplicantsSchema },
     ]),
     JwtModule.register({
       secret: 'secret',

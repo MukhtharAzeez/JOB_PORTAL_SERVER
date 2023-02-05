@@ -1,6 +1,7 @@
 import { User } from './../../user/schemas/user.schema';
 import { Injectable } from '@nestjs/common';
 import { JobApplicantRepository } from '../repository/job-applicants.repository';
+import { JobApplicant } from '../schema/job-applicants.schema';
 
 @Injectable()
 export class JobApplicantsService {
@@ -35,6 +36,16 @@ export class JobApplicantsService {
       jobId,
       adminId,
       companyId,
+    );
+  }
+
+  async getAnApplicantSchedules(
+    jobId: string,
+    applicantId: string,
+  ): Promise<JobApplicant> {
+    return this.jobApplicantRepository.getAnApplicantSchedules(
+      jobId,
+      applicantId,
     );
   }
 }

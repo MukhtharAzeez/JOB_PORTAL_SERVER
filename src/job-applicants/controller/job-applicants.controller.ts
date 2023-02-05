@@ -11,6 +11,7 @@ import {
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { User } from 'src/user/schemas/user.schema';
+import { JobApplicant } from '../schema/job-applicants.schema';
 import { JobApplicantsService } from '../service/job-applicants.service';
 
 @Controller('jobApplicant')
@@ -105,6 +106,24 @@ export class JobApplicantsController {
       object.jobId,
       object.adminId,
       object.companyId,
+    );
+  }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Get('/getAnApplicantSchedules')
+  async getAnApplicantSchedules(
+    @Query() object: { jobId: string; applicantId: string },
+  ): Promise<JobApplicant> {
+    if (
+      !object.jobId ||
+      object.jobId == 'undefined' ||
+      !object.applicantId ||
+      object.applicantId == 'undefined'
+    )
+      throw new HttpException('An Error occurred', HttpStatus.CONFLICT);
+    return this.jobApplicantService.getAnApplicantSchedules(
+      object.jobId,
+      object.applicantId,
     );
   }
 }

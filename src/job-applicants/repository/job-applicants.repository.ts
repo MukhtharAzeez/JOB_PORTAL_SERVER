@@ -108,19 +108,22 @@ export class JobApplicantRepository {
               companyApproved: false,
               userAccepted: false,
               scheduledAdmin: new Types.ObjectId(adminId),
+              scheduledAt: Date.now(),
             },
           },
         },
       );
-      // Check it is reScheduled,  uf it is update the request
+      // Check it is reScheduled,  if it is then update the request
       const requestExist = await this.companyRequestsModel.findOne({
         job: jobId,
         applicant: applicantId,
+        type: 'online',
       });
       if (requestExist) {
         await this.companyRequestsModel.deleteOne({
           job: jobId,
           applicant: applicantId,
+          type: 'online',
         });
         const request = await this.companyRequestsModel.create({
           company: companyId,
@@ -129,7 +132,7 @@ export class JobApplicantRepository {
           admin: adminId,
           job: jobId,
           accepted: null,
-          type: 'offline',
+          type: 'online',
         });
         await request.save();
         return true;
@@ -178,6 +181,7 @@ export class JobApplicantRepository {
               companyApproved: false,
               userAccepted: false,
               scheduledAdmin: new Types.ObjectId(adminId),
+              scheduledAt: Date.now(),
             },
           },
         },
@@ -185,11 +189,13 @@ export class JobApplicantRepository {
       const requestExist = await this.companyRequestsModel.findOne({
         job: jobId,
         applicant: applicantId,
+        type: 'offline',
       });
       if (requestExist) {
         await this.companyRequestsModel.deleteOne({
           job: jobId,
           applicant: applicantId,
+          type: 'offline',
         });
         const request = await this.companyRequestsModel.create({
           company: companyId,
@@ -227,6 +233,7 @@ export class JobApplicantRepository {
               companyApproved: false,
               userAccepted: false,
               hiredAdmin: new Types.ObjectId(adminId),
+              scheduledAt: Date.now(),
             },
           },
         },
@@ -247,5 +254,15 @@ export class JobApplicantRepository {
       'Please Provide valid datas',
       HttpStatus.BAD_REQUEST,
     );
+  }
+
+  async getAnApplicantSchedules(
+    jobId: string,
+    applicantId: string,
+  ): Promise<JobApplicant> {
+    return this.jobApplicantModel
+      .findOne({ jobId, applicantId })
+      .populate('jobId')
+      .populate('applicantId');
   }
 }
