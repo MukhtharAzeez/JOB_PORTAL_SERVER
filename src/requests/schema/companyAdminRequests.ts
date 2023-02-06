@@ -43,7 +43,7 @@ export class CompanyAdminRequests {
   @Prop({ required: true })
   type: string;
 
-  @Prop({ required: true })
+  @Prop({ })
   userAccepted: boolean;
 
   @Prop({})

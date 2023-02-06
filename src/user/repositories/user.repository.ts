@@ -183,7 +183,11 @@ export class UserRepository {
     );
 
     await this.jobApplicantModel.updateOne(
-      { jobId: requestExist.job, applicantId: requestExist.user },
+      {
+        jobId: requestExist.job,
+        applicantId: requestExist.user,
+        type: requestExist.type,
+      },
       { $set: { [requestExist.type + '.userAccepted']: true } },
     );
 
@@ -191,11 +195,13 @@ export class UserRepository {
       await this.CompanyAdminRequestModel.findOne({
         job: requestExist.job,
         applicant: requestExist.user,
+        type: requestExist.type,
       });
     if (companyAdminRequestExist) {
       await this.CompanyAdminRequestModel.deleteOne({
         job: requestExist.job,
         applicant: requestExist.user,
+        type: requestExist.type,
       });
     }
     const request = await this.CompanyAdminRequestModel.create({
@@ -223,15 +229,26 @@ export class UserRepository {
       { $set: { accepted: false } },
     );
 
+    await this.jobApplicantModel.updateOne(
+      {
+        jobId: requestExist.job,
+        applicantId: requestExist.user,
+        type: requestExist.type,
+      },
+      { $set: { [requestExist.type + '.userAccepted']: false } },
+    );
+
     const companyAdminRequestExist =
       await this.CompanyAdminRequestModel.findOne({
         job: requestExist.job,
         applicant: requestExist.user,
+        type: requestExist.type,
       });
     if (companyAdminRequestExist) {
       await this.CompanyAdminRequestModel.deleteOne({
         job: requestExist.job,
         applicant: requestExist.user,
+        type: requestExist.type,
       });
     }
 
@@ -263,11 +280,13 @@ export class UserRepository {
       await this.CompanyAdminRequestModel.findOne({
         job: requestExist.job,
         applicant: requestExist.user,
+        type: requestExist.type,
       });
     if (companyAdminRequestExist) {
       await this.CompanyAdminRequestModel.deleteOne({
         job: requestExist.job,
         applicant: requestExist.user,
+        type: requestExist.type,
       });
     }
 

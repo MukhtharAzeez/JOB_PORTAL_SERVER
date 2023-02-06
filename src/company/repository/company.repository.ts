@@ -128,6 +128,7 @@ export class CompanyRepository {
       {
         jobId: requestCheck.job,
         applicantId: requestCheck.applicant,
+        type: requestCheck.type,
       },
       {
         $set: {
@@ -165,10 +166,12 @@ export class CompanyRepository {
         },
       },
     );
+
     await this.jobApplicantModel.updateOne(
       {
         jobId: requestCheck.job,
         applicantId: requestCheck.applicant,
+        type: requestCheck.type,
       },
       {
         $set: {
@@ -187,15 +190,18 @@ export class CompanyRepository {
       type: requestCheck.type,
     });
     await request.save();
+    console.log('but not fdsjlasjdafs');
 
     const userGetRequest = await this.userRequestsModel.findOne({
       company: requestCheck.company,
       job: requestCheck.job,
+      type: requestCheck.type,
     });
     if (userGetRequest) {
       await this.userRequestsModel.deleteOne({
         company: requestCheck.company,
         job: requestCheck.job,
+        type: requestCheck.type,
       });
     }
     return true;
