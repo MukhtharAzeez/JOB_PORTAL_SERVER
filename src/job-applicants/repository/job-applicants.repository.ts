@@ -245,7 +245,7 @@ export class JobApplicantRepository {
         admin: adminId,
         job: jobId,
         accepted: null,
-        type: 'hire',
+        type: 'hired',
       });
       await request.save();
       return true;
@@ -264,5 +264,17 @@ export class JobApplicantRepository {
       .findOne({ jobId, applicantId })
       .populate('jobId')
       .populate('applicantId');
+  }
+
+  async setAScheduleAsCompleted(
+    jobId: string,
+    applicantId: string,
+    type,
+  ): Promise<boolean> {
+    await this.jobApplicantModel.updateOne(
+      { jobId, applicantId },
+      { $set: { [type + '.completed']: true } },
+    );
+    return true;
   }
 }

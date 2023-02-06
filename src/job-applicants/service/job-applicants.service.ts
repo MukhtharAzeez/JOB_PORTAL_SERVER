@@ -48,4 +48,16 @@ export class JobApplicantsService {
       applicantId,
     );
   }
+
+  async setAScheduleAsCompleted(
+    jobId: string,
+    applicantId: string,
+    type: string,
+  ): Promise<boolean> {
+    return this.jobApplicantRepository.setAScheduleAsCompleted(
+      jobId,
+      applicantId,
+      type,
+    );
+  }
 }

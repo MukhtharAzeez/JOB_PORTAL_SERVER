@@ -126,4 +126,25 @@ export class JobApplicantsController {
       object.applicantId,
     );
   }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Get('/setAScheduleAsCompleted')
+  async setAScheduleAsCompleted(
+    @Query() object: { jobId: string; applicantId: string; type: string },
+  ): Promise<boolean> {
+    if (
+      !object.jobId ||
+      object.jobId == 'undefined' ||
+      !object.applicantId ||
+      object.applicantId == 'undefined' ||
+      !object.type ||
+      object.type == 'undefined'
+    )
+      throw new HttpException('An Error occurred', HttpStatus.CONFLICT);
+    return this.jobApplicantService.setAScheduleAsCompleted(
+      object.jobId,
+      object.applicantId,
+      object.type,
+    );
+  }
 }
