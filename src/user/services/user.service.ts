@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { JobApplicant } from 'src/job-applicants/schema/job-applicants.schema';
 import { UserRequests } from 'src/requests/schema/userRequests.schema';
 import { UserRepository } from 'src/user/repositories/user.repository';
 import { User } from 'src/user/schemas/user.schema';
@@ -45,5 +46,12 @@ export class UserService {
 
   async userRequestToChangeTime(requestId: string): Promise<boolean> {
     return this.userRepository.userRequestToChangeTime(requestId);
+  }
+
+  async getUserSchedules(
+    userId: string,
+    month: number,
+  ): Promise<JobApplicant[]> {
+    return this.userRepository.getUserSchedules(userId, month);
   }
 }

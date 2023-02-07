@@ -304,4 +304,85 @@ export class UserRepository {
     await request.save();
     return true;
   }
+
+  async getUserSchedules(
+    userId: string,
+    month: number,
+  ): Promise<JobApplicant[]> {
+    console.log(userId, month);
+    const user = await this.jobApplicantModel.aggregate([
+      {
+        $match: {
+          applicantId: new Types.ObjectId(userId),
+          // $or: [
+          //   {
+          //     $and: [
+          //       { 'online.companyApproved': true },
+          //       { 'online.userAccepted': true },
+          //       { 'online.completed': false },
+          //     ],
+          //   },
+          //   {
+          //     $and: [
+          //       { 'offline.companyApproved': true },
+          //       { 'offline.userAccepted': true },
+          //       { 'offline.completed': false },
+          //     ],
+          //   },
+          // ],
+        },
+      },
+      {
+        $project: {
+          jobId: 1,
+          applicantId: 1,
+          objects: {
+            $map: {
+              input: [
+                { k: 'online', v: '$online' },
+                { k: 'offline', v: '$offline' },
+              ],
+              as: 'obj',
+              in: {
+                type: '$$obj.k',
+                data: '$$obj.v',
+              },
+            },
+          },
+        },
+      },
+      { $unwind: '$objects' },
+      {
+        $match: {
+          'objects.data.completed': false,
+        },
+      },
+      {
+        $group: {
+          _id: '$objects.data.date',
+          objects: {
+            $push: {
+              type: '$objects.type',
+              data: '$objects.data',
+            },
+          },
+          applicantId: { $first: '$applicantId' },
+          jobId: { $first: '$jobId' },
+        },
+      },
+      {
+        $addFields: {
+          month: { $month: new Date('$_id') },
+        },
+      },
+      {
+        $match: {
+          month: month,
+        },
+      },
+    ]);
+
+    console.log(user);
+    return user;
+  }
 }

@@ -6,6 +6,7 @@ import { JwtService } from '@nestjs/jwt';
 import { UpdateUserDto } from '../dto/updateUser.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { UserRequests } from 'src/requests/schema/userRequests.schema';
+import { JobApplicant } from 'src/job-applicants/schema/job-applicants.schema';
 
 @Controller('user')
 export class UserController {
@@ -99,5 +100,17 @@ export class UserController {
     if (!object.requestId || object.requestId == 'undefined')
       throw new HttpException('An Error occurred', HttpStatus.CONFLICT);
     return this.userService.userRequestToChangeTime(object.requestId);
+  }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Get('/getUserSchedules')
+  async getUserSchedules(
+    @Query() object: { userId: string; date: Date },
+  ): Promise<JobApplicant[]> {
+    if (!object.userId || object.userId == 'undefined' || !object.date)
+      throw new HttpException('An Error occurred', HttpStatus.CONFLICT);
+
+    const month = new Date(object.date).getMonth();
+    return this.userService.getUserSchedules(object.userId, month);
   }
 }
