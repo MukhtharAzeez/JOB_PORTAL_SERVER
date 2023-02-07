@@ -109,8 +109,7 @@ export class UserController {
   ): Promise<JobApplicant[]> {
     if (!object.userId || object.userId == 'undefined' || !object.date)
       throw new HttpException('An Error occurred', HttpStatus.CONFLICT);
-
-    const month = new Date(object.date).getMonth();
+    const month = new Date(object.date).getMonth() + 1;
     return this.userService.getUserSchedules(object.userId, month);
   }
 }

@@ -310,26 +310,11 @@ export class UserRepository {
     month: number,
   ): Promise<JobApplicant[]> {
     console.log(userId, month);
+    const year = 2023;
     const user = await this.jobApplicantModel.aggregate([
       {
         $match: {
           applicantId: new Types.ObjectId(userId),
-          // $or: [
-          //   {
-          //     $and: [
-          //       { 'online.companyApproved': true },
-          //       { 'online.userAccepted': true },
-          //       { 'online.completed': false },
-          //     ],
-          //   },
-          //   {
-          //     $and: [
-          //       { 'offline.companyApproved': true },
-          //       { 'offline.userAccepted': true },
-          //       { 'offline.completed': false },
-          //     ],
-          //   },
-          // ],
         },
       },
       {
@@ -372,14 +357,26 @@ export class UserRepository {
       },
       {
         $addFields: {
-          month: { $month: new Date('$_id') },
+          month: {
+            $month: {
+              $dateFromString: {
+                dateString: '$_id',
+                format: '%Y-%m-%d',
+              },
+            },
+          },
+          year: {
+            $year: {
+              $dateFromString: {
+                dateString: '$_id',
+                format: '%Y-%m-%d',
+              },
+            },
+          },
         },
       },
-      {
-        $match: {
-          month: month,
-        },
-      },
+      { $match: { month: month, year: year } },
+      { $sort: { _id: 1 } },
     ]);
 
     console.log(user);
