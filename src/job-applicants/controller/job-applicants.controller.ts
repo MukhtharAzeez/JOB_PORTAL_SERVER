@@ -5,7 +5,6 @@ import {
   HttpException,
   HttpStatus,
   Patch,
-  Post,
   Query,
   UseGuards,
 } from '@nestjs/common';
@@ -21,16 +20,22 @@ export class JobApplicantsController {
   @UseGuards(AuthGuard('jwt'))
   @Get('/applyForJob')
   async applyForJob(
-    @Query() object: { jobId: string; userId: string },
+    @Query() object: { companyId: string; jobId: string; userId: string },
   ): Promise<boolean> {
     if (
       !object.jobId ||
       object.jobId == 'undefined' ||
       !object.userId ||
-      object.userId == 'undefined'
+      object.userId == 'undefined' ||
+      !object.companyId ||
+      object.companyId == 'undefined'
     )
       throw new HttpException('An Error occurred', HttpStatus.BAD_REQUEST);
-    return this.jobApplicantService.applyForJob(object.jobId, object.userId);
+    return this.jobApplicantService.applyForJob(
+      object.companyId,
+      object.jobId,
+      object.userId,
+    );
   }
 
   @UseGuards(AuthGuard('jwt'))
@@ -145,6 +150,22 @@ export class JobApplicantsController {
       object.jobId,
       object.applicantId,
       object.type,
+    );
+  }
+
+  @Get('/getCountAppliedJobs')
+  async getCountAppliedJobs(): Promise<number> {
+    return this.jobApplicantService.getCountAppliedJobs();
+  }
+
+  @Get('/getAllAppliedJobs')
+  async getAllAppliedJobs(
+    @Query() object: { userId: string; skip: number; limit: number },
+  ): Promise<JobApplicant[]> {
+    return this.jobApplicantService.getAllAppliedJobs(
+      object.userId,
+      object.limit,
+      object.skip,
     );
   }
 }

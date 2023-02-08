@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { Company } from 'src/company/schema/company.schema';
 import { JobApplicant } from 'src/job-applicants/schema/job-applicants.schema';
 import { UserRequests } from 'src/requests/schema/userRequests.schema';
 import { UserRepository } from 'src/user/repositories/user.repository';
@@ -51,7 +52,12 @@ export class UserService {
   async getUserSchedules(
     userId: string,
     month: number,
+    year: number,
   ): Promise<JobApplicant[]> {
-    return this.userRepository.getUserSchedules(userId, month);
+    return this.userRepository.getUserSchedules(userId, month, year);
+  }
+
+  async getRandomCompany(): Promise<Company[]> {
+    return this.userRepository.getRandomCompany();
   }
 }

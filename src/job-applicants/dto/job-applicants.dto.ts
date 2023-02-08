@@ -7,6 +7,9 @@ export class JobApplicants {
   @IsNotEmpty()
   applicantId: string;
 
+  @IsNotEmpty()
+  companyId: string;
+
   accepted: boolean;
 
   online: object;

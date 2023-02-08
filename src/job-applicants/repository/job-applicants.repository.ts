@@ -19,7 +19,11 @@ export class JobApplicantRepository {
     private companyRequestsModel: Model<CompanyRequestsDocument>,
   ) {}
 
-  async applyForJob(jobId: string, userId: string): Promise<boolean> {
+  async applyForJob(
+    companyId: string,
+    jobId: string,
+    userId: string,
+  ): Promise<boolean> {
     // To check the user have a resume
     const userResume = await this.userModel.findOne({ _id: userId });
     if (userResume.resume.length == 0)
@@ -39,6 +43,7 @@ export class JobApplicantRepository {
       );
     // To add the user as an applicant
     const newApplicant = await new this.jobApplicantModel({
+      companyId: companyId,
       jobId: jobId,
       applicantId: userId,
     });
@@ -276,5 +281,22 @@ export class JobApplicantRepository {
       { $set: { [type + '.completed']: true } },
     );
     return true;
+  }
+
+  async getCountAppliedJobs(): Promise<number> {
+    return this.jobApplicantModel.find({}).count();
+  }
+
+  async getAllAppliedJobs(
+    userId: string,
+    limit: number,
+    skip: number,
+  ): Promise<JobApplicant[]> {
+    return this.jobApplicantModel
+      .find({ applicantId: userId })
+      .populate('companyId')
+      .populate('jobId')
+      .skip(skip * limit)
+      .limit(limit);
   }
 }

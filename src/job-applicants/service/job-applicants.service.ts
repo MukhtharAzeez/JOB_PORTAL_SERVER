@@ -7,8 +7,12 @@ import { JobApplicant } from '../schema/job-applicants.schema';
 export class JobApplicantsService {
   constructor(private jobApplicantRepository: JobApplicantRepository) {}
 
-  async applyForJob(jobId: string, userId: string): Promise<boolean> {
-    return this.jobApplicantRepository.applyForJob(jobId, userId);
+  async applyForJob(
+    companyId: string,
+    jobId: string,
+    userId: string,
+  ): Promise<boolean> {
+    return this.jobApplicantRepository.applyForJob(companyId, jobId, userId);
   }
 
   async getAllApplicants(jobId: string): Promise<User[]> {
@@ -59,5 +63,17 @@ export class JobApplicantsService {
       applicantId,
       type,
     );
+  }
+
+  async getCountAppliedJobs(): Promise<number> {
+    return this.jobApplicantRepository.getCountAppliedJobs();
+  }
+
+  async getAllAppliedJobs(
+    userId: string,
+    limit: number,
+    skip: number,
+  ): Promise<JobApplicant[]> {
+    return this.jobApplicantRepository.getAllAppliedJobs(userId, limit, skip);
   }
 }

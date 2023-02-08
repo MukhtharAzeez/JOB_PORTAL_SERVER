@@ -16,6 +16,7 @@ import {
   JobApplicant,
   JobApplicantDocument,
 } from 'src/job-applicants/schema/job-applicants.schema';
+import { Company, CompanyDocument } from 'src/company/schema/company.schema';
 
 @Injectable()
 export class UserRepository {
@@ -28,6 +29,8 @@ export class UserRepository {
     private CompanyAdminRequestModel: Model<CompanyAdminRequestsDocument>,
     @InjectModel(JobApplicant.name)
     private jobApplicantModel: Model<JobApplicantDocument>,
+    @InjectModel(Company.name)
+    private companyModel: Model<CompanyDocument>,
   ) {}
 
   async find(): Promise<User[]> {
@@ -308,15 +311,10 @@ export class UserRepository {
   async getUserSchedules(
     userId: string,
     month: number,
+    year: number,
   ): Promise<JobApplicant[]> {
-    console.log(userId, month);
-    const year = 2023;
-    const user = await this.jobApplicantModel.aggregate([
-      {
-        $match: {
-          applicantId: new Types.ObjectId(userId),
-        },
-      },
+    return this.jobApplicantModel.aggregate([
+      { $match: { applicantId: new Types.ObjectId(userId) } },
       {
         $project: {
           jobId: 1,
@@ -337,11 +335,7 @@ export class UserRepository {
         },
       },
       { $unwind: '$objects' },
-      {
-        $match: {
-          'objects.data.completed': false,
-        },
-      },
+      { $match: { 'objects.data.completed': false } },
       {
         $group: {
           _id: '$objects.data.date',
@@ -373,13 +367,22 @@ export class UserRepository {
               },
             },
           },
+          day: {
+            $dayOfMonth: {
+              $dateFromString: {
+                dateString: '$_id',
+                format: '%Y-%m-%d',
+              },
+            },
+          },
         },
       },
       { $match: { month: month, year: year } },
       { $sort: { _id: 1 } },
     ]);
+  }
 
-    console.log(user);
-    return user;
+  async getRandomCompany(): Promise<Company[]> {
+    return this.companyModel.aggregate([{ $sample: { size: 1 } }]);
   }
 }

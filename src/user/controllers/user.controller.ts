@@ -7,6 +7,7 @@ import { UpdateUserDto } from '../dto/updateUser.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { UserRequests } from 'src/requests/schema/userRequests.schema';
 import { JobApplicant } from 'src/job-applicants/schema/job-applicants.schema';
+import { Company } from 'src/company/schema/company.schema';
 
 @Controller('user')
 export class UserController {
@@ -110,6 +111,13 @@ export class UserController {
     if (!object.userId || object.userId == 'undefined' || !object.date)
       throw new HttpException('An Error occurred', HttpStatus.CONFLICT);
     const month = new Date(object.date).getMonth() + 1;
-    return this.userService.getUserSchedules(object.userId, month);
+    const year = new Date(object.date).getFullYear();
+    return this.userService.getUserSchedules(object.userId, month, year);
+  }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Get('/getRandomCompany')
+  async getRandomCompany(): Promise<Company[]> {
+    return this.userService.getRandomCompany();
   }
 }
