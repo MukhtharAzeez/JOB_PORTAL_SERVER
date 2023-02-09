@@ -9,6 +9,7 @@ import { AdminModule } from './admin/admin.module';
 import { CompanyAdminModule } from './company-admin/company-admin.module';
 import { JobApplicantsModule } from './job-applicants/job-applicants.module';
 import { ChatModule } from './chat/chat.module';
+import { VideoCallGateway } from './video-call/video-call.gateway';
 
 @Module({
   imports: [
@@ -26,5 +27,6 @@ import { ChatModule } from './chat/chat.module';
     ChatModule,
   ],
   controllers: [],
+  providers: [VideoCallGateway],
 })
 export class AppModule {}
