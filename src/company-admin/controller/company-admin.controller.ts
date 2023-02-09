@@ -15,6 +15,7 @@ import { CompanyAdminService } from '../service/company-admin.service';
 import { AddAJobPost } from '../dto/addAJobPost.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { CompanyAdminRequests } from 'src/requests/schema/companyAdminRequests';
+import { JobApplicant } from 'src/job-applicants/schema/job-applicants.schema';
 
 @Controller('companyAdmin')
 export class CompanyAdminController {
@@ -80,5 +81,21 @@ export class CompanyAdminController {
     if (!object.requestId || object.requestId == 'undefined')
       throw new HttpException('An Error occurred', HttpStatus.CONFLICT);
     return this.companyAdminService.updateRequest(object.requestId);
+  }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Get('/getPendingSchedules')
+  async getPendingSchedules(
+    @Query() object: { companyId: string; date: Date },
+  ): Promise<JobApplicant[]> {
+    if (!object.companyId || object.companyId == 'undefined' || !object.date)
+      throw new HttpException('An Error occurred', HttpStatus.CONFLICT);
+    const month = new Date(object.date).getMonth() + 1;
+    const year = new Date(object.date).getFullYear();
+    return this.companyAdminService.getPendingSchedules(
+      object.companyId,
+      month,
+      year,
+    );
   }
 }

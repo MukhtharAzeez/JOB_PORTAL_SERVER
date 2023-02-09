@@ -1,6 +1,5 @@
 import {
   OnGatewayConnection,
-  SubscribeMessage,
   WebSocketGateway,
   WebSocketServer,
 } from '@nestjs/websockets';
@@ -12,7 +11,6 @@ export class VideoCallGateway implements OnGatewayConnection {
   server: Server;
 
   async handleConnection(socket: Socket) {
-    console.log('connected to new', socket.id);
     socket.emit('me', socket.id);
     socket.on('callUser', ({ userToCall, signalData, from, name }) => {
       socket

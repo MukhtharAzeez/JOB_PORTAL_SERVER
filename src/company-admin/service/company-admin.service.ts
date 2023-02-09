@@ -1,4 +1,5 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { JobApplicant } from 'src/job-applicants/schema/job-applicants.schema';
 import { CompanyAdminRequests } from 'src/requests/schema/companyAdminRequests';
 import { AddAJobPost } from '../dto/addAJobPost.dto';
 import { CompanyAdminRepository } from '../repository/company-admin.repository';
@@ -38,5 +39,13 @@ export class CompanyAdminService {
 
   async updateRequest(requestId: string): Promise<boolean> {
     return this.companyAdminRepository.updateRequest(requestId);
+  }
+
+  async getPendingSchedules(
+    userId: string,
+    month: number,
+    year: number,
+  ): Promise<JobApplicant[]> {
+    return this.companyAdminRepository.getPendingSchedules(userId, month, year);
   }
 }

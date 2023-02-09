@@ -1,7 +1,7 @@
 import { JobPostDocument } from './../schema/job-post-schema.schema';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { AddAJobPost } from '../dto/addAJobPost.dto';
 import {
   CompanyAdmin,
@@ -12,6 +12,10 @@ import {
   CompanyAdminRequests,
   CompanyAdminRequestsDocument,
 } from 'src/requests/schema/companyAdminRequests';
+import {
+  JobApplicant,
+  JobApplicantDocument,
+} from 'src/job-applicants/schema/job-applicants.schema';
 // import { Schema as MongooseSchema, Types } from 'mongoose';
 
 @Injectable()
@@ -23,6 +27,8 @@ export class CompanyAdminRepository {
     private jobPostModel: Model<JobPostDocument>,
     @InjectModel(CompanyAdminRequests.name)
     private companyAdminRequests: Model<CompanyAdminRequestsDocument>,
+    @InjectModel(JobApplicant.name)
+    private jobApplicantModel: Model<JobApplicantDocument>,
   ) {}
 
   async getProfile(adminId: string): Promise<CompanyAdmin> {
@@ -89,5 +95,79 @@ export class CompanyAdminRepository {
       { $set: { reSchedule: true } },
     );
     return true;
+  }
+
+  async getPendingSchedules(
+    companyId: string,
+    month: number,
+    year: number,
+  ): Promise<JobApplicant[]> {
+    return this.jobApplicantModel.aggregate([
+      { $match: { companyId: new Types.ObjectId(companyId) } },
+      {
+        $project: {
+          jobId: 1,
+          applicantId: 1,
+          objects: {
+            $map: {
+              input: [
+                { k: 'online', v: '$online' },
+                { k: 'offline', v: '$offline' },
+              ],
+              as: 'obj',
+              in: {
+                type: '$$obj.k',
+                data: '$$obj.v',
+              },
+            },
+          },
+        },
+      },
+      { $unwind: '$objects' },
+      { $match: { 'objects.data.completed': false } },
+      {
+        $group: {
+          _id: '$objects.data.date',
+          objects: {
+            $push: {
+              type: '$objects.type',
+              data: '$objects.data',
+            },
+          },
+          applicantId: { $first: '$applicantId' },
+          jobId: { $first: '$jobId' },
+        },
+      },
+      {
+        $addFields: {
+          month: {
+            $month: {
+              $dateFromString: {
+                dateString: '$_id',
+                format: '%Y-%m-%d',
+              },
+            },
+          },
+          year: {
+            $year: {
+              $dateFromString: {
+                dateString: '$_id',
+                format: '%Y-%m-%d',
+              },
+            },
+          },
+          day: {
+            $dayOfMonth: {
+              $dateFromString: {
+                dateString: '$_id',
+                format: '%Y-%m-%d',
+              },
+            },
+          },
+        },
+      },
+      { $match: { month: month, year: year } },
+      { $sort: { _id: 1 } },
+    ]);
   }
 }

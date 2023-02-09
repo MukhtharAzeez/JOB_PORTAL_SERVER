@@ -1,3 +1,4 @@
+import { JobApplicant, JobApplicantsSchema } from 'src/job-applicants/schema/job-applicants.schema';
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import {
@@ -19,6 +20,7 @@ import { CompanyAdminService } from './service/company-admin.service';
       { name: JobPost.name, schema: JobPostSchema },
       { name: CompanyAdmin.name, schema: CompanyAdminSchema },
       { name: CompanyAdminRequests.name, schema: CompanyAdminRequestsSchema },
+      { name: JobApplicant.name, schema: JobApplicantsSchema },
     ]),
   ],
   controllers: [CompanyAdminController],
