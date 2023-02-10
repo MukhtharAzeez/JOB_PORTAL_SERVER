@@ -11,6 +11,9 @@ export type ChatDocument = HydratedDocument<Chat>;
 export class Chat {
   @Prop({ required: true })
   members: Array<Types.ObjectId>;
+
+  @Prop({ required: true })
+  type: string;
 }
 
 export const ChatSchema = SchemaFactory.createForClass(Chat);

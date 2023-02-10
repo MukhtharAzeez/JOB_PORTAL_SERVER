@@ -5,11 +5,11 @@ import { ChatRepository } from '../repository/chat.repository';
 export class ChatService {
   constructor(private chatRepository: ChatRepository) {}
 
-  async createChat(senderId, receiverId) {
-    return this.chatRepository.createChat(senderId, receiverId);
+  async createChat(senderId: string, receiverId: string, type: string) {
+    return this.chatRepository.createChat(senderId, receiverId, type);
   }
-  async userChats(userId: string) {
-    return this.chatRepository.userChats(userId);
+  async userChats(userId: string, type: string) {
+    return this.chatRepository.userChats(userId, type);
   }
   async findChat(senderId: string, receiverId: string) {
     return this.chatRepository.findChat(senderId, receiverId);

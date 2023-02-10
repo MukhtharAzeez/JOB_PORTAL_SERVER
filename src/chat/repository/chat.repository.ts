@@ -11,16 +11,19 @@ export class ChatRepository {
     @InjectModel(Message.name) private messageModel: Model<MessageDocument>,
   ) {}
 
-  async createChat(senderId, receiverId) {
+  async createChat(senderId: string, receiverId: string, type: string) {
     const alreadyExist = await this.chatModel.findOne({
       members: { $all: [senderId, receiverId] },
     });
     if (alreadyExist) return null;
-    const newChat = new this.chatModel({ members: [senderId, receiverId] });
+    const newChat = new this.chatModel({
+      members: [senderId, receiverId],
+      type,
+    });
     await newChat.save();
   }
-  async userChats(userId: string) {
-    return this.chatModel.find({ members: { $in: [userId] } });
+  async userChats(userId: string, type: string) {
+    return this.chatModel.find({ members: { $in: [userId] }, type: type });
   }
   async findChat(secondId: string, receiverId: string) {
     return this.chatModel.find({ members: { $all: [secondId, receiverId] } });

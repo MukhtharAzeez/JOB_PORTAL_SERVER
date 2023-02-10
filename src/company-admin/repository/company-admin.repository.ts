@@ -34,7 +34,7 @@ export class CompanyAdminRepository {
   async getProfile(adminId: string): Promise<CompanyAdmin> {
     if (!adminId)
       throw new HttpException('An Error occured', HttpStatus.BAD_REQUEST);
-    return this.companyAdminModel.findOne({ _id: adminId });
+    return this.companyAdminModel.findOne({ _id: adminId }).populate('company');
   }
 
   async addAJobPost(addAJobPost: AddAJobPost): Promise<JobPost> {

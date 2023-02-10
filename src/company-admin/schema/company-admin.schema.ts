@@ -11,7 +11,7 @@ export type CompanyAdminDocument = HydratedDocument<CompanyAdmin>;
 export class CompanyAdmin {
   @Prop({
     type: MongooseSchema.Types.ObjectId,
-    ref: 'companies',
+    ref: 'Company',
     required: true,
   })
   company: Types.ObjectId;

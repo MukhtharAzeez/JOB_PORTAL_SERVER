@@ -21,7 +21,7 @@ import { JobApplicant } from 'src/job-applicants/schema/job-applicants.schema';
 export class CompanyAdminController {
   constructor(private companyAdminService: CompanyAdminService) {}
 
-  @UseGuards(AuthGuard('jwt'))
+  // @UseGuards(AuthGuard('jwt'))
   @Get('/profile')
   async getProfile(
     @Query() object: { adminId: string },
