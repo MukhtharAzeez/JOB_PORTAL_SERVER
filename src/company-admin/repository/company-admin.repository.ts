@@ -132,10 +132,10 @@ export class CompanyAdminRepository {
             $push: {
               type: '$objects.type',
               data: '$objects.data',
+              applicantId: '$applicantId',
+              jobId: '$jobId',
             },
           },
-          applicantId: { $first: '$applicantId' },
-          jobId: { $first: '$jobId' },
         },
       },
       {

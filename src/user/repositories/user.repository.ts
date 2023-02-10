@@ -335,7 +335,13 @@ export class UserRepository {
         },
       },
       { $unwind: '$objects' },
-      { $match: { 'objects.data.completed': false } },
+      {
+        $match: {
+          'objects.data.completed': false,
+          'objects.data.companyApproved': true,
+          'objects.data.userAccepted': true,
+        },
+      },
       {
         $group: {
           _id: '$objects.data.date',
@@ -343,10 +349,10 @@ export class UserRepository {
             $push: {
               type: '$objects.type',
               data: '$objects.data',
+              applicantId: '$applicantId',
+              jobId: '$jobId',
             },
           },
-          applicantId: { $first: '$applicantId' },
-          jobId: { $first: '$jobId' },
         },
       },
       {

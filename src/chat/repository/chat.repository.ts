@@ -15,12 +15,12 @@ export class ChatRepository {
     const alreadyExist = await this.chatModel.findOne({
       members: { $all: [senderId, receiverId] },
     });
-    if (alreadyExist) return null;
+    if (alreadyExist) return alreadyExist;
     const newChat = new this.chatModel({
       members: [senderId, receiverId],
       type,
     });
-    await newChat.save();
+    return newChat.save();
   }
   async userChats(userId: string, type: string) {
     return this.chatModel.find({ members: { $in: [userId] }, type: type });
