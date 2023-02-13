@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, UseGuards } from '@nestjs/common';
+import { HttpException, HttpStatus, Param, UseGuards } from '@nestjs/common';
 import { UserService } from '../services/user.service';
 import { Body, Controller, Get, Post, Query } from '@nestjs/common';
 import { User } from 'src/user/schemas/user.schema';
@@ -115,9 +115,16 @@ export class UserController {
     return this.userService.getUserSchedules(object.userId, month, year);
   }
 
-  @UseGuards(AuthGuard('jwt'))
+  // @UseGuards(AuthGuard('jwt'))
   @Get('/getRandomCompany')
   async getRandomCompany(): Promise<Company[]> {
     return this.userService.getRandomCompany();
+  }
+
+  @Get('/getUsersBySearching/:name')
+  async getUsersBySearching(
+    @Param() object: { name: string },
+  ): Promise<User[]> {
+    return this.userService.getUsersBySearching(object.name);
   }
 }

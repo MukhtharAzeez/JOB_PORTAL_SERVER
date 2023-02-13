@@ -9,7 +9,8 @@ async function bootstrap() {
     origin: ['http://localhost:3000'],
     methods: ['GET', 'POST', 'PATCH', 'PUT'],
     credentials: true,
-    exposedHeaders: ['Content-Length', 'X-Foo', 'X-Bar']
+    // exposedHeaders: ['Content-Length', 'X-Foo', 'X-Bar'],
+    // allowedHeaders: ['Content-Type', 'Access'],
   });
   app.useGlobalPipes(
     new ValidationPipe({

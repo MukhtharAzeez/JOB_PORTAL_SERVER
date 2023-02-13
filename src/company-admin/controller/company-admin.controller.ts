@@ -16,6 +16,7 @@ import { AddAJobPost } from '../dto/addAJobPost.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { CompanyAdminRequests } from 'src/requests/schema/companyAdminRequests';
 import { JobApplicant } from 'src/job-applicants/schema/job-applicants.schema';
+import { User } from 'src/user/schemas/user.schema';
 
 @Controller('companyAdmin')
 export class CompanyAdminController {
@@ -97,5 +98,11 @@ export class CompanyAdminController {
       month,
       year,
     );
+  }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Get('/getRandomUser')
+  async getRandomUser(): Promise<User[]> {
+    return this.companyAdminService.getRandomUser();
   }
 }

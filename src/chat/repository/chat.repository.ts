@@ -23,13 +23,19 @@ export class ChatRepository {
     return newChat.save();
   }
   async userChats(userId: string, type: string) {
-    return this.chatModel.find({ members: { $in: [userId] }, type: type });
+    return this.chatModel
+      .find({ members: { $in: [userId] }, type: type })
+      .sort({ updatedAt: -1 });
   }
   async findChat(secondId: string, receiverId: string) {
     return this.chatModel.find({ members: { $all: [secondId, receiverId] } });
   }
   async sendMessage(senderId: string, chatId: string, text: string) {
     const newMessage = new this.messageModel({ chatId, senderId, text });
+    await this.chatModel.updateOne(
+      { _id: chatId },
+      { $set: { updatedAt: Date.now() } },
+    );
     return newMessage.save();
   }
   async getMessages(chatId: string) {

@@ -16,6 +16,7 @@ import {
   JobApplicant,
   JobApplicantDocument,
 } from 'src/job-applicants/schema/job-applicants.schema';
+import { User, UserDocument } from 'src/user/schemas/user.schema';
 // import { Schema as MongooseSchema, Types } from 'mongoose';
 
 @Injectable()
@@ -29,6 +30,8 @@ export class CompanyAdminRepository {
     private companyAdminRequests: Model<CompanyAdminRequestsDocument>,
     @InjectModel(JobApplicant.name)
     private jobApplicantModel: Model<JobApplicantDocument>,
+    @InjectModel(User.name)
+    private userModel: Model<UserDocument>,
   ) {}
 
   async getProfile(adminId: string): Promise<CompanyAdmin> {
@@ -169,5 +172,8 @@ export class CompanyAdminRepository {
       { $match: { month: month, year: year } },
       { $sort: { _id: 1 } },
     ]);
+  }
+  async getRandomUser(): Promise<User[]> {
+    return this.userModel.aggregate([{ $sample: { size: 1 } }]);
   }
 }

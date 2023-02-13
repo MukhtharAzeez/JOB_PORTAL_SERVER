@@ -391,4 +391,34 @@ export class UserRepository {
   async getRandomCompany(): Promise<Company[]> {
     return this.companyModel.aggregate([{ $sample: { size: 1 } }]);
   }
+
+  async getUsersBySearching(name: string): Promise<User[]> {
+    const users = await this.userModel.aggregate([
+      {
+        $addFields: {
+          fullName: { $concat: ['$firstName', ' ', '$lastName'] },
+          fullNameInverse: { $concat: ['$lastName', ' ', '$firstName'] },
+        },
+      },
+      {
+        $match: {
+          $or: [
+            {
+              fullName: {
+                $regex: `(\s+${name}|^${name})`,
+                $options: 'i',
+              },
+            },
+            {
+              fullNameInverse: {
+                $regex: `(\s+${name}|^${name})`,
+                $options: 'i',
+              },
+            },
+          ],
+        },
+      },
+    ]);
+    return users;
+  }
 }

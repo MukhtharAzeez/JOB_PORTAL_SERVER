@@ -60,4 +60,8 @@ export class UserService {
   async getRandomCompany(): Promise<Company[]> {
     return this.userRepository.getRandomCompany();
   }
+
+  async getUsersBySearching(name: string): Promise<User[]> {
+    return this.userRepository.getUsersBySearching(name);
+  }
 }
