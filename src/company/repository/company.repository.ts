@@ -77,7 +77,7 @@ export class CompanyRepository {
     skip: number,
   ): Promise<CompanyAdmin[]> {
     return this.companyAdminModel
-      .find({ company: companyId })
+      .find({ company: companyId }, { password: 0 })
       .skip(skip * limit)
       .limit(limit);
   }
@@ -100,11 +100,20 @@ export class CompanyRepository {
       throw new HttpException('Please try again', HttpStatus.BAD_REQUEST);
     }
     return this.companyRequestModel
-      .find({ company: companyId })
-      .populate('company')
-      .populate('admin')
+      .find({ company: companyId }, { password: 0 })
+      .populate(
+        'company',
+        '-password -approved -cinNumber -createdAt -updatedAt -establishedOn -gstNumber -incorporation -msmeCertificate -panCardNumber -udhyogAdhar',
+      )
+      .populate(
+        'admin',
+        '-password -address -businessMobile -employeeId -mobile -postalCode -status -createdAt -updatedAt',
+      )
       .populate('job')
-      .populate('applicant')
+      .populate(
+        'applicant',
+        '-password -address -DOB -city -companies -country -createdAt -friends -gender -image -resume -signInWith -updatedAt -postalCode -mobile',
+      )
       .sort({ createdAt: -1 });
   }
 

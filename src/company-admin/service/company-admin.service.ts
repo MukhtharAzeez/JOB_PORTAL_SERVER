@@ -16,11 +16,11 @@ export class CompanyAdminService {
     return this.companyAdminRepository.getProfile(adminId);
   }
 
-  async addAJobPost(addAJobPost: AddAJobPost): Promise<JobPost> {
+  async addAJobPost(addAJobPost: AddAJobPost): Promise<boolean> {
     return this.companyAdminRepository.addAJobPost(addAJobPost);
   }
 
-  async editAJob(addAJobPost: AddAJobPost): Promise<JobPost> {
+  async editAJob(addAJobPost: AddAJobPost): Promise<boolean> {
     return this.companyAdminRepository.editAJob(addAJobPost);
   }
 

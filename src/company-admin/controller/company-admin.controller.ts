@@ -34,13 +34,13 @@ export class CompanyAdminController {
 
   @UseGuards(AuthGuard('jwt'))
   @Post('/postJob')
-  async addAJobPost(@Body() addAJobPost: AddAJobPost): Promise<JobPost> {
+  async addAJobPost(@Body() addAJobPost: AddAJobPost): Promise<boolean> {
     return this.companyAdminService.addAJobPost(addAJobPost);
   }
 
   @UseGuards(AuthGuard('jwt'))
   @Patch('/editAJob')
-  async editAJob(@Body() addAJobPost: AddAJobPost): Promise<JobPost> {
+  async editAJob(@Body() addAJobPost: AddAJobPost): Promise<boolean> {
     return this.companyAdminService.editAJob(addAJobPost);
   }
 

@@ -112,7 +112,9 @@ export class AuthRepository {
       );
       if (!passwordCheck)
         throw new HttpException('Invalid Credentials', HttpStatus.BAD_REQUEST);
-      else return user;
+      else {
+        return this.userModel.findOne({ email: loginUserDto.email },{password:0});
+      };
     }
 
     if (!user) {
@@ -131,7 +133,9 @@ export class AuthRepository {
       );
       if (!passwordCheck)
         throw new HttpException('Invalid Credentials', HttpStatus.BAD_REQUEST);
-      if (company.approved) return company;
+      if (company.approved){
+        return this.companyModel.findOne({ email: loginUserDto.email },{password:0});
+      } 
       else
         throw new HttpException(
           'Your page is not approved yet Please wait until administrator approve your request',
@@ -155,7 +159,12 @@ export class AuthRepository {
       );
       if (!passwordCheck)
         throw new HttpException('Invalid Credentials', HttpStatus.BAD_REQUEST);
-      else return companyAdmin;
+      else{
+        return this.companyAdminModel.findOne(
+          { email: loginUserDto.email },
+          { password: 0 },
+        );
+      }
       
     }
 

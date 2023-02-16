@@ -10,7 +10,6 @@ export class ChatGateway implements OnGatewayConnection {
   @WebSocketServer()
   server: Server;
   activeUser: any[] = [];
-  // constructor() {}
 
   async getUser(userId) {
     return this.activeUser.find((user) => user.userId == userId);

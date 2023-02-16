@@ -37,15 +37,23 @@ export class CompanyAdminRepository {
   async getProfile(adminId: string): Promise<CompanyAdmin> {
     if (!adminId)
       throw new HttpException('An Error occured', HttpStatus.BAD_REQUEST);
-    return this.companyAdminModel.findOne({ _id: adminId }).populate('company');
+    return this.companyAdminModel
+      .findOne({ _id: adminId }, { password: 0 })
+      .populate(
+        'company',
+        '-password -approved -cinNumber -createdAt -updatedAt -establishedOn -gstNumber -incorporation -msmeCertificate -panCardNumber -udhyogAdhar',
+      );
   }
 
-  async addAJobPost(addAJobPost: AddAJobPost): Promise<JobPost> {
+  async addAJobPost(addAJobPost: AddAJobPost): Promise<boolean> {
     const newPost = new this.jobPostModel(addAJobPost);
-    return newPost.save();
+    await newPost.save();
+    return true;
   }
 
-  async editAJob(addAJobPost: any): Promise<any> {
+  async editAJob(addAJobPost: any): Promise<boolean> {
+    const postExist = await this.jobPostModel.findOne({ _id: addAJobPost._id });
+    if (!postExist) return false;
     const {
       job,
       jobDescription,
@@ -55,7 +63,7 @@ export class CompanyAdminRepository {
       aboutCompany,
       applications,
     } = addAJobPost;
-    return this.jobPostModel.updateOne(
+    await this.jobPostModel.updateOne(
       { _id: addAJobPost._id },
       {
         $set: {
@@ -69,12 +77,13 @@ export class CompanyAdminRepository {
         },
       },
     );
+    return true;
   }
 
   async getAllCompanyPosts(companyId: string): Promise<JobPost[]> {
     const job = await this.jobPostModel
-      .find({ companyId: companyId })
-      .populate('adminId');
+      .find({ companyId: companyId }, { password: 0 })
+      .populate('admin', '-password -createdAt -updatedAt');
     return job;
   }
 
@@ -86,8 +95,11 @@ export class CompanyAdminRepository {
     companyAdminId: string,
   ): Promise<CompanyAdminRequests[]> {
     return this.companyAdminRequests
-      .find({ admin: companyAdminId })
-      .populate('applicant')
+      .find({ admin: companyAdminId }, { password: 0 })
+      .populate(
+        'applicant',
+        '-password -address -DOB -city -companies -country -createdAt -friends -gender -image -resume -signInWith -updatedAt -postalCode -mobile',
+      )
       .populate('job')
       .sort({ createdAt: -1 });
   }
