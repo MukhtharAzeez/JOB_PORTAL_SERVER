@@ -25,7 +25,10 @@ export class JobApplicantRepository {
     userId: string,
   ): Promise<boolean> {
     // To check the user have a resume
-    const userResume = await this.userModel.findOne({ _id: userId });
+    const userResume = await this.userModel.findOne(
+      { _id: userId },
+      { password: 0 },
+    );
     if (userResume.resume.length == 0)
       throw new HttpException(
         'Please update your profile with your Resume !',
@@ -54,7 +57,10 @@ export class JobApplicantRepository {
   async getAllApplicants(jobId: string): Promise<User[]> {
     return this.jobApplicantModel
       .find({ jobId: jobId })
-      .populate('applicantId');
+      .populate(
+        'applicantId',
+        '-password -address -DOB -city -companies -country -createdAt -friends -gender -resume -signInWith -updatedAt -postalCode -mobile',
+      );
   }
 
   async rejectApplicant(applicantId: string, jobId: string): Promise<boolean> {
@@ -268,7 +274,10 @@ export class JobApplicantRepository {
     return this.jobApplicantModel
       .findOne({ jobId, applicantId })
       .populate('jobId')
-      .populate('applicantId');
+      .populate(
+        'applicantId',
+        '-password -address -DOB -city -companies -country -createdAt -friends -gender -resume -signInWith -updatedAt -postalCode -mobile',
+      );
   }
 
   async setAScheduleAsCompleted(
@@ -294,7 +303,10 @@ export class JobApplicantRepository {
   ): Promise<JobApplicant[]> {
     return this.jobApplicantModel
       .find({ applicantId: userId })
-      .populate('companyId')
+      .populate(
+        'companyId',
+        '-password -approved -cinNumber -createdAt -updatedAt -establishedOn -gstNumber -incorporation -msmeCertificate -panCardNumber -udhyogAdhar',
+      )
       .populate('jobId')
       .skip(skip * limit)
       .limit(limit);

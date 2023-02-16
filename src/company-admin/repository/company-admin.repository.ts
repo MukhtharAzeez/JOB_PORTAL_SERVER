@@ -83,7 +83,7 @@ export class CompanyAdminRepository {
   async getAllCompanyPosts(companyId: string): Promise<JobPost[]> {
     const job = await this.jobPostModel
       .find({ companyId: companyId }, { password: 0 })
-      .populate('admin', '-password -createdAt -updatedAt');
+      .populate('adminId', '-password -createdAt -updatedAt');
     return job;
   }
 

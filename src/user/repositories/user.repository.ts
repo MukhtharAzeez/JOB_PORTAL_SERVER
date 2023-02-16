@@ -34,11 +34,11 @@ export class UserRepository {
   ) {}
 
   async find(): Promise<User[]> {
-    return this.userModel.find({});
+    return this.userModel.find({}, { password: 0 });
   }
 
   async getCurrentUserProfile(userId: string): Promise<User> {
-    return this.userModel.findOne({ _id: userId });
+    return this.userModel.findOne({ _id: userId }, { password: 0 });
   }
 
   async updateProfile(userDetails: any): Promise<User> {
@@ -88,14 +88,17 @@ export class UserRepository {
   }
 
   async getUserByEmail(email: string) {
-    return this.userModel.findOne({ email: email });
+    return this.userModel.findOne({ email: email }, { password: 0 });
   }
 
   async connectFriend(userId: string, friendId: string): Promise<boolean> {
-    const alreadyConnected = await this.userModel.findOne({
-      _id: userId,
-      friends: { $in: [new Types.ObjectId(friendId)] },
-    });
+    const alreadyConnected = await this.userModel.findOne(
+      {
+        _id: userId,
+        friends: { $in: [new Types.ObjectId(friendId)] },
+      },
+      { password: 0 },
+    );
     if (!alreadyConnected) {
       await this.userModel.updateOne(
         { _id: userId },
@@ -170,7 +173,10 @@ export class UserRepository {
   async getUserNotifications(userId: string): Promise<UserRequests[]> {
     return this.userRequestModel
       .find({ user: userId })
-      .populate('company')
+      .populate(
+        'company',
+        '-password -approved -cinNumber -createdAt -updatedAt -establishedOn -gstNumber -incorporation -msmeCertificate -panCardNumber -udhyogAdhar',
+      )
       .populate('job')
       .sort({ createdAt: -1 });
   }

@@ -48,9 +48,12 @@ export class CompanyRepository {
   ) {}
 
   async addAdmin(companyAdminDto: CompanyAdminDto): Promise<any> {
-    const adminExist = await this.companyAdminModel.findOne({
-      email: companyAdminDto.email,
-    });
+    const adminExist = await this.companyAdminModel.findOne(
+      {
+        email: companyAdminDto.email,
+      },
+      { password: 0 },
+    );
     if (adminExist) {
       throw new BadRequestException('An Admin already exists with this email');
     }

@@ -34,7 +34,10 @@ export class UserPostRepository {
       .find({})
       .skip(skip * limit)
       .limit(limit)
-      .populate('user')
+      .populate(
+        'user',
+        '-password -address -DOB -city -companies -country -createdAt -friends -gender -image -resume -signInWith -updatedAt -postalCode -mobile',
+      )
       .sort({ createdAt: -1 });
     return posts;
   }
@@ -82,7 +85,10 @@ export class UserPostRepository {
   async getComments(postId: string): Promise<UserPostsComments[]> {
     const comments = await this.userPostCommentsModel
       .find({ postId: postId })
-      .populate('userId')
+      .populate(
+        'userId',
+        '-password -address -DOB -city -companies -country -createdAt -friends -gender -image -resume -signInWith -updatedAt -postalCode -mobile',
+      )
       .sort({ createdAt: -1 });
     return comments;
   }
