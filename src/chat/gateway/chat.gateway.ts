@@ -32,6 +32,15 @@ export class ChatGateway implements OnGatewayConnection {
         socket.to(user.socketId).emit('receive-message', data);
       }
     });
+    socket.on('send-notification', (data) => {
+      const { receiver } = data;
+      const user = this.activeUser.find((user) => {
+        return user.userId === receiver;
+      });
+      if (user) {
+        socket.to(user.socketId).emit('receive-notification', data);
+      }
+    });
   }
 
   async handleDisconnect(socket: Socket) {

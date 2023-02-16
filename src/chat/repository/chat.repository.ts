@@ -3,12 +3,18 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Chat, ChatDocument } from '../schema/chat.schema';
 import { Message, MessageDocument } from '../schema/message.shema';
+import {
+  Notification,
+  NotificationDocument,
+} from '../schema/notification.schema';
 
 @Injectable()
 export class ChatRepository {
   constructor(
     @InjectModel(Chat.name) private chatModel: Model<ChatDocument>,
     @InjectModel(Message.name) private messageModel: Model<MessageDocument>,
+    @InjectModel(Notification.name)
+    private notificationModel: Model<NotificationDocument>,
   ) {}
 
   async createChat(senderId: string, receiverId: string, type: string) {
@@ -40,5 +46,16 @@ export class ChatRepository {
   }
   async getMessages(chatId: string) {
     return this.messageModel.find({ chatId });
+  }
+  async sendNotification(
+    content: string,
+    receiverId: string,
+  ): Promise<boolean> {
+    const newNotification = new this.notificationModel({
+      content: content,
+      receiver: receiverId,
+    });
+    await newNotification.save();
+    return true;
   }
 }

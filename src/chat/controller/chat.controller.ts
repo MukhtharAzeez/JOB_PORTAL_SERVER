@@ -52,4 +52,11 @@ export class ChatController {
   async getMessages(@Query() object: { chatId: string }) {
     return this.chatService.getMessages(object.chatId);
   }
+
+  @Post('/sendNotification')
+  async sendNotification(
+    @Body() object: { content: string; receiver: string },
+  ): Promise<boolean> {
+    return this.chatService.sendNotification(object.content, object.receiver);
+  }
 }

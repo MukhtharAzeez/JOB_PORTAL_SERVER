@@ -101,6 +101,7 @@ export class CompanyAdminRepository {
         '-password -address -DOB -city -companies -country -createdAt -friends -gender -image -resume -signInWith -updatedAt -postalCode -mobile',
       )
       .populate('job')
+      .populate('admin', '-password')
       .sort({ createdAt: -1 });
   }
 

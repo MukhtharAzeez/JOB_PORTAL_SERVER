@@ -36,7 +36,7 @@ export class UserPostRepository {
       .limit(limit)
       .populate(
         'user',
-        '-password -address -DOB -city -companies -country -createdAt -friends -gender -image -resume -signInWith -updatedAt -postalCode -mobile',
+        '-password -address -DOB -city -companies -country -createdAt -friends -gender -resume -signInWith -updatedAt -postalCode -mobile',
       )
       .sort({ createdAt: -1 });
     return posts;

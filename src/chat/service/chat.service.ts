@@ -20,4 +20,10 @@ export class ChatService {
   async getMessages(chatId: string) {
     return this.chatRepository.getMessages(chatId);
   }
+  async sendNotification(
+    content: string,
+    receiverId: string,
+  ): Promise<boolean> {
+    return this.chatRepository.sendNotification(content, receiverId);
+  }
 }

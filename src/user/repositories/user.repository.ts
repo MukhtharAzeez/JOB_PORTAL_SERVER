@@ -178,6 +178,8 @@ export class UserRepository {
         '-password -approved -cinNumber -createdAt -updatedAt -establishedOn -gstNumber -incorporation -msmeCertificate -panCardNumber -udhyogAdhar',
       )
       .populate('job')
+      .populate('admin')
+      .populate('user')
       .sort({ createdAt: -1 });
   }
 
