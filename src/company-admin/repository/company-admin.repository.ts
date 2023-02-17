@@ -2,7 +2,7 @@ import { JobPostDocument } from './../schema/job-post-schema.schema';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
-import { AddAJobPost } from '../dto/addAJobPost.dto';
+// import { AddAJobPost } from '../dto/addAJobPost.dto';
 import {
   CompanyAdmin,
   CompanyAdminDocument,
@@ -45,7 +45,7 @@ export class CompanyAdminRepository {
       );
   }
 
-  async addAJobPost(addAJobPost: AddAJobPost): Promise<boolean> {
+  async addAJobPost(addAJobPost: any): Promise<boolean> {
     const newPost = new this.jobPostModel(addAJobPost);
     await newPost.save();
     return true;
