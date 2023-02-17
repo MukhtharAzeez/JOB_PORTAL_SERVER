@@ -1,10 +1,9 @@
-import { Body, Controller, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Query } from '@nestjs/common';
 import {
   Get,
   Post,
 } from '@nestjs/common/decorators/http/request-mapping.decorator';
 import { Param } from '@nestjs/common/decorators/http/route-params.decorator';
-import { AuthGuard } from '@nestjs/passport';
 import { ChatService } from '../service/chat.service';
 
 @Controller('chat')

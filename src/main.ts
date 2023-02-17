@@ -6,8 +6,8 @@ import { AppModule } from './app.module';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.enableCors({
-    origin: ['http://localhost:3000'],
-    methods: ['GET', 'POST', 'PATCH', 'PUT'],
+    origin: ['https://mellifluous-maamoul-f0c941.netlify.app'],
+    methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE'],
     credentials: true,
     // exposedHeaders: ['Content-Length', 'X-Foo', 'X-Bar'],
     // allowedHeaders: ['Content-Type', 'Access'],
