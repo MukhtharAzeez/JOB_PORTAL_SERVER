@@ -12,11 +12,11 @@ import {
   Patch,
 } from '@nestjs/common';
 import { CompanyAdminService } from '../service/company-admin.service';
-import { AddAJobPost } from '../dto/addAJobPost.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { CompanyAdminRequests } from 'src/requests/schema/companyAdminRequests';
 import { JobApplicant } from 'src/job-applicants/schema/job-applicants.schema';
 import { User } from 'src/user/schemas/user.schema';
+// import { AddAJobPost } from '../dto/addAJobPost.dto';
 
 @Controller('companyAdmin')
 export class CompanyAdminController {
@@ -34,13 +34,13 @@ export class CompanyAdminController {
 
   @UseGuards(AuthGuard('jwt'))
   @Post('/postJob')
-  async addAJobPost(@Body() addAJobPost: AddAJobPost): Promise<boolean> {
+  async addAJobPost(@Body() addAJobPost: any): Promise<boolean> {
     return this.companyAdminService.addAJobPost(addAJobPost);
   }
 
   @UseGuards(AuthGuard('jwt'))
   @Patch('/editAJob')
-  async editAJob(@Body() addAJobPost: AddAJobPost): Promise<boolean> {
+  async editAJob(@Body() addAJobPost: any): Promise<boolean> {
     return this.companyAdminService.editAJob(addAJobPost);
   }
 
