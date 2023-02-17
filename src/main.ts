@@ -7,9 +7,9 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.enableCors({
     origin: ['https://main--mellifluous-maamoul-f0c941.netlify.app'],
-    methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE'],
+    methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE','HEAD','OPTIONS'],
     credentials: true,
-    // exposedHeaders: ['Content-Length', 'X-Foo', 'X-Bar'],
+    exposedHeaders: ['Content-Length', 'X-Foo', 'X-Bar'],
     // allowedHeaders: ['Content-Type', 'Access'],
   });
   app.useGlobalPipes(
