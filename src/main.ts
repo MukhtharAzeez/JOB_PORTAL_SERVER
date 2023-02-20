@@ -6,7 +6,7 @@ import { AppModule } from './app.module';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.enableCors({
-    origin: ['https://kaleidoscopic-creponne-8feec3.netlify.app'],
+    origin: ['https://gleeful-hamster-4886dc.netlify.app'],
     methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE', 'HEAD', 'OPTIONS'],
     credentials: true,
     exposedHeaders: ['Content-Length', 'X-Foo', 'X-Bar'],
