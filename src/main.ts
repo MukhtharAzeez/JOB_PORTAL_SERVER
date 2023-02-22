@@ -6,7 +6,8 @@ import { AppModule } from './app.module';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.enableCors({
-    origin: ['https://web.labonnz.club'],
+    origin: ['https://main.d1irnkz1l4wgu5.amplifyapp.com'],
+    // origin: ['http://localhost:3000'],
     methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE', 'HEAD', 'OPTIONS'],
     credentials: true,
     exposedHeaders: ['Content-Length', 'X-Foo', 'X-Bar'],
