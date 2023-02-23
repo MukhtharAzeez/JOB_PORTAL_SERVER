@@ -7,6 +7,7 @@ import { CreateUserWithProvidersDto } from 'src/user/dto/createUserWithProviders
 import { LoginUserDto } from 'src/user/dto/loginUser.dto';
 import { CompanyCreateDto } from 'src/company/dto/companyCreate.dto';
 import { Company } from 'src/company/schema/company.schema';
+import { AdminDto } from 'src/admin/dto/admin.dto';
 
 @Injectable()
 export class AuthService {
@@ -30,6 +31,13 @@ export class AuthService {
     return {
       access_token: token,
     };
+  }
+
+  async adminSignup(adminDto: AdminDto) {
+    this.authRepository.adminSignup(adminDto);
+  }
+  async loginAdmin(email: string, password: string) {
+    this.authRepository.loginAdmin(email, password);
   }
 
   async createUser(createUserDto: CreateUserDto): Promise<any> {

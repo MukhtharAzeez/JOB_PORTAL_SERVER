@@ -87,70 +87,56 @@ export class JobApplicantRepository {
     return true;
   }
 
-  async acceptApplicantAndSchedule(
+  async scheduleOnlineInterview(
     formData: any,
     applicantId: string,
     jobId: string,
     adminId: string,
     companyId: string,
   ): Promise<boolean> {
-    // Update the jobPost by applicant information if it is a online interview
-    if (formData.onlineInterviewDate) {
-      const { onlineInterviewDate, onlineInterviewTime } = formData;
-      if (
-        new Date(onlineInterviewDate) < new Date() ||
-        onlineInterviewDate.length == 0 ||
-        onlineInterviewTime.length == 0
-      ) {
-        throw new HttpException(
-          'Please Provide valid datas',
-          HttpStatus.BAD_REQUEST,
-        );
-      }
-      await this.jobApplicantModel.updateOne(
-        { jobId: jobId, applicantId: applicantId },
-        {
-          $set: {
-            accepted: true,
-            online: {
-              date: onlineInterviewDate,
-              time: onlineInterviewTime,
-              completed: false,
-              companyApproved: false,
-              userAccepted: false,
-              scheduledAdmin: new Types.ObjectId(adminId),
-              scheduledAt: Date.now(),
-            },
+    const { onlineInterviewDate, onlineInterviewTime } = formData;
+    if (
+      new Date(onlineInterviewDate) < new Date() ||
+      onlineInterviewDate.length == 0 ||
+      onlineInterviewTime.length == 0
+    ) {
+      throw new HttpException(
+        'Please Provide valid datas',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+    await this.jobApplicantModel.updateOne(
+      { jobId: jobId, applicantId: applicantId },
+      {
+        $set: {
+          accepted: true,
+          online: {
+            date: onlineInterviewDate,
+            time: onlineInterviewTime,
+            completed: false,
+            companyApproved: false,
+            userAccepted: false,
+            scheduledAdmin: new Types.ObjectId(adminId),
+            scheduledAt: Date.now(),
           },
         },
-      );
-      // Check it is reScheduled,  if it is then update the request
-      const requestExist = await this.companyRequestsModel.findOne({
+      },
+    );
+    // Check it is reScheduled,  if it is then update the request
+    const requestExist = await this.companyRequestsModel.findOne({
+      job: jobId,
+      applicant: applicantId,
+      type: 'online',
+    });
+    if (requestExist) {
+      await this.companyRequestsModel.deleteOne({
         job: jobId,
         applicant: applicantId,
         type: 'online',
       });
-      if (requestExist) {
-        await this.companyRequestsModel.deleteOne({
-          job: jobId,
-          applicant: applicantId,
-          type: 'online',
-        });
-        const request = await this.companyRequestsModel.create({
-          company: companyId,
-          message: `Accepted and rescheduled an online interview according to applicant request at ${onlineInterviewDate} ${onlineInterviewTime} for Applicant`,
-          applicant: applicantId,
-          admin: adminId,
-          job: jobId,
-          accepted: null,
-          type: 'online',
-        });
-        await request.save();
-        return true;
-      }
       const request = await this.companyRequestsModel.create({
         company: companyId,
-        message: `Accepted and scheduled an online interview at ${onlineInterviewDate} ${onlineInterviewTime} for Applicant`,
+        message: `Accepted and rescheduled an online interview according to applicant request at ${onlineInterviewDate} ${onlineInterviewTime} for Applicant`,
         applicant: applicantId,
         admin: adminId,
         job: jobId,
@@ -160,69 +146,74 @@ export class JobApplicantRepository {
       await request.save();
       return true;
     }
+    const request = await this.companyRequestsModel.create({
+      company: companyId,
+      message: `Accepted and scheduled an online interview at ${onlineInterviewDate} ${onlineInterviewTime} for Applicant`,
+      applicant: applicantId,
+      admin: adminId,
+      job: jobId,
+      accepted: null,
+      type: 'online',
+    });
+    await request.save();
+    return true;
+  }
 
-    // Update the jobPost by applicant information if it is a offline interview
-    if (formData.offlineInterviewDate) {
-      const {
-        offlineInterviewDate,
-        offlineInterviewTime,
-        offlineInterviewPlace,
-      } = formData;
-      if (
-        new Date(offlineInterviewDate) < new Date() ||
-        !offlineInterviewDate.length ||
-        !offlineInterviewTime.length ||
-        !offlineInterviewPlace.length
-      ) {
-        throw new HttpException(
-          'Please Provide valid datas',
-          HttpStatus.BAD_REQUEST,
-        );
-      }
-      await this.jobApplicantModel.updateOne(
-        { jobId: jobId, applicantId: applicantId },
-        {
-          $set: {
-            accepted: true,
-            offline: {
-              date: offlineInterviewDate,
-              time: offlineInterviewTime,
-              place: offlineInterviewPlace,
-              completed: false,
-              companyApproved: false,
-              userAccepted: false,
-              scheduledAdmin: new Types.ObjectId(adminId),
-              scheduledAt: Date.now(),
-            },
+  async scheduleOfflineInterview(
+    formData: any,
+    applicantId: string,
+    jobId: string,
+    adminId: string,
+    companyId: string,
+  ): Promise<boolean> {
+    const {
+      offlineInterviewDate,
+      offlineInterviewTime,
+      offlineInterviewPlace,
+    } = formData;
+    if (
+      new Date(offlineInterviewDate) < new Date() ||
+      !offlineInterviewDate.length ||
+      !offlineInterviewTime.length ||
+      !offlineInterviewPlace.length
+    ) {
+      throw new HttpException(
+        'Please Provide valid datas',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+    await this.jobApplicantModel.updateOne(
+      { jobId: jobId, applicantId: applicantId },
+      {
+        $set: {
+          accepted: true,
+          offline: {
+            date: offlineInterviewDate,
+            time: offlineInterviewTime,
+            place: offlineInterviewPlace,
+            completed: false,
+            companyApproved: false,
+            userAccepted: false,
+            scheduledAdmin: new Types.ObjectId(adminId),
+            scheduledAt: Date.now(),
           },
         },
-      );
-      const requestExist = await this.companyRequestsModel.findOne({
+      },
+    );
+    const requestExist = await this.companyRequestsModel.findOne({
+      job: jobId,
+      applicant: applicantId,
+      type: 'offline',
+    });
+    if (requestExist) {
+      await this.companyRequestsModel.deleteOne({
         job: jobId,
         applicant: applicantId,
         type: 'offline',
       });
-      if (requestExist) {
-        await this.companyRequestsModel.deleteOne({
-          job: jobId,
-          applicant: applicantId,
-          type: 'offline',
-        });
-        const request = await this.companyRequestsModel.create({
-          company: companyId,
-          message: `Accepted and rescheduled an offline interview according to applicant request on ${offlineInterviewPlace} at ${offlineInterviewDate} ${offlineInterviewTime} for Applicant`,
-          applicant: applicantId,
-          admin: adminId,
-          job: jobId,
-          accepted: null,
-          type: 'offline',
-        });
-        await request.save();
-        return true;
-      }
       const request = await this.companyRequestsModel.create({
         company: companyId,
-        message: `Accepted and scheduled an offline interview on ${offlineInterviewPlace} at ${offlineInterviewDate} ${offlineInterviewTime} for Applicant`,
+        message: `Accepted and rescheduled an offline interview according to applicant request on ${offlineInterviewPlace} at ${offlineInterviewDate} ${offlineInterviewTime} for Applicant`,
         applicant: applicantId,
         admin: adminId,
         job: jobId,
@@ -230,6 +221,49 @@ export class JobApplicantRepository {
         type: 'offline',
       });
       await request.save();
+      return true;
+    }
+    const request = await this.companyRequestsModel.create({
+      company: companyId,
+      message: `Accepted and scheduled an offline interview on ${offlineInterviewPlace} at ${offlineInterviewDate} ${offlineInterviewTime} for Applicant`,
+      applicant: applicantId,
+      admin: adminId,
+      job: jobId,
+      accepted: null,
+      type: 'offline',
+    });
+    await request.save();
+    return true;
+  }
+
+  async acceptApplicantAndSchedule(
+    formData: any,
+    applicantId: string,
+    jobId: string,
+    adminId: string,
+    companyId: string,
+  ): Promise<boolean> {
+    // Update the jobPost by applicant information if it is a online interview
+    if (formData.onlineInterviewDate) {
+      await this.scheduleOnlineInterview(
+        formData,
+        applicantId,
+        jobId,
+        adminId,
+        companyId,
+      );
+      return true;
+    }
+
+    // Update the jobPost by applicant information if it is a offline interview
+    if (formData.offlineInterviewDate) {
+      await this.scheduleOfflineInterview(
+        formData,
+        applicantId,
+        jobId,
+        adminId,
+        companyId,
+      );
       return true;
     }
     // Update the jobPost by applicant information if admin directly hire the user

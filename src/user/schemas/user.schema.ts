@@ -32,9 +32,6 @@ export class User {
   password: string;
 
   @Prop({ required: true })
-  confirmPassword: string;
-
-  @Prop({ required: true })
   signInWith: string;
 
   @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'UserPosts' })

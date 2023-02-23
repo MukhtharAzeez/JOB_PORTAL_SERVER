@@ -11,13 +11,15 @@ import { AuthRepository } from './auth.repository';
 import { User, UserSchema } from 'src/user/schemas/user.schema';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Company, CompanySchema } from 'src/company/schema/company.schema';
+import { Admin, AdminSchema } from 'src/admin/schema/admin.schema';
 
 @Module({
   imports: [
-    MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
-    MongooseModule.forFeature([{ name: Company.name, schema: CompanySchema }]),
     MongooseModule.forFeature([
+      { name: User.name, schema: UserSchema },
+      { name: Company.name, schema: CompanySchema },
       { name: CompanyAdmin.name, schema: CompanyAdminSchema },
+      { name: Admin.name, schema: AdminSchema },
     ]),
     JwtModule.register({
       secret: 'secret',

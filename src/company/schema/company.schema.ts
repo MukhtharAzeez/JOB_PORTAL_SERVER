@@ -39,9 +39,6 @@ export class Company {
   password: string;
 
   @Prop({ required: true })
-  confirmPassword: string;
-
-  @Prop({ required: true })
   approved: boolean;
 }
 

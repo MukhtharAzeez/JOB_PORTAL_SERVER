@@ -19,6 +19,8 @@ import {
   CompanyAdmin,
   CompanyAdminDocument,
 } from 'src/company-admin/schema/company-admin.schema';
+import { AdminDto } from 'src/admin/dto/admin.dto';
+import { Admin, AdminDocument } from 'src/admin/schema/admin.schema';
 
 @Injectable()
 export class AuthRepository {
@@ -27,8 +29,39 @@ export class AuthRepository {
     @InjectModel(Company.name) private companyModel: Model<CompanyDocument>,
     @InjectModel(CompanyAdmin.name)
     private companyAdminModel: Model<CompanyAdminDocument>,
+    @InjectModel(Admin.name)
+    private adminModel: Model<AdminDocument>,
   ) {}
 
+  async adminSignup(adminDto: AdminDto) {
+    if (adminDto.password != adminDto.confirmPassword) {
+      throw new HttpException(
+        'Password and confirm password must be same',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+    const password = await argon2.hash(adminDto.password);
+    adminDto.password = password;
+    delete adminDto['confirmPassword'];
+    const admin = new this.adminModel(adminDto);
+    await admin.save();
+  }
+  async loginAdmin(email: string, password: string) {
+    const admin = await this.adminModel.findOne({
+      email: email,
+    });
+    if (admin) {
+      const passwordCheck = await argon2.verify(admin.password, password);
+      if (!passwordCheck)
+        throw new HttpException('Invalid Credentials', HttpStatus.BAD_REQUEST);
+      else {
+        return this.adminModel.findOne({ email: email }, { password: 0 });
+      }
+    }
+    if (!admin) {
+      throw new BadRequestException('You did not have a page');
+    }
+  }
   async create(createUserDto: CreateUserDto): Promise<CreateUserDto> {
     const userExist = await this.userModel.findOne({
       email: createUserDto.email,
@@ -42,11 +75,15 @@ export class AuthRepository {
     let newUser;
     let userCreated;
     try {
+      if (createUserDto.password != createUserDto.confirmPassword) {
+        throw new BadRequestException(
+          'Password and confirm password must be same',
+        );
+      }
       const password = await argon2.hash(createUserDto.password);
-      const confirmPassword = await argon2.hash(createUserDto.confirmPassword);
       createUserDto.password = password;
-      createUserDto.confirmPassword = confirmPassword;
-      newUser = await new this.userModel(createUserDto);
+      delete createUserDto['confirmPassword'];
+      newUser = new this.userModel(createUserDto);
       userCreated = await newUser.save();
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -55,7 +92,6 @@ export class AuthRepository {
     delete userCreated.confirmPassword;
     return userCreated;
   }
-
   async registerWithProviders(
     createUserWithProvidersDto: CreateUserWithProvidersDto,
   ): Promise<any> {
@@ -64,12 +100,17 @@ export class AuthRepository {
     });
     if (!userExist) {
       try {
+        if (
+          createUserWithProvidersDto.password !=
+          createUserWithProvidersDto.confirmPassword
+        ) {
+          throw new BadRequestException(
+            'Password and confirm password must be same',
+          );
+        }
         const password = await argon2.hash(createUserWithProvidersDto.password);
-        const confirmPassword = await argon2.hash(
-          createUserWithProvidersDto.confirmPassword,
-        );
         createUserWithProvidersDto.password = password;
-        createUserWithProvidersDto.confirmPassword = confirmPassword;
+        delete createUserWithProvidersDto['confirmPassword'];
         const newUser = await this.userModel.create(createUserWithProvidersDto);
         return newUser.save();
       } catch (error) {
@@ -82,7 +123,6 @@ export class AuthRepository {
       return userExist;
     }
   }
-
   async createABusinessPage(
     companyCreateDto: CompanyCreateDto,
   ): Promise<Company> {
@@ -94,15 +134,18 @@ export class AuthRepository {
         'You already have a business page',
         HttpStatus.CONFLICT,
       );
+    if (companyCreateDto.password != companyCreateDto.confirmPassword) {
+      throw new BadRequestException(
+        'Password and confirm password must be same',
+      );
+    }
     const password = await argon2.hash(companyCreateDto.password);
-    const confirmPassword = await argon2.hash(companyCreateDto.confirmPassword);
     companyCreateDto.password = password;
-    companyCreateDto.confirmPassword = confirmPassword;
     companyCreateDto.approved = false;
-    const company = await new this.companyModel(companyCreateDto);
+    delete companyCreateDto['confirmPassword'];
+    const company = new this.companyModel(companyCreateDto);
     return company.save();
   }
-
   async loginUser(loginUserDto: LoginUserDto) {
     const user = await this.userModel.findOne({ email: loginUserDto.email });
     if (user) {
@@ -113,15 +156,17 @@ export class AuthRepository {
       if (!passwordCheck)
         throw new HttpException('Invalid Credentials', HttpStatus.BAD_REQUEST);
       else {
-        return this.userModel.findOne({ email: loginUserDto.email },{password:0});
-      };
+        return this.userModel.findOne(
+          { email: loginUserDto.email },
+          { password: 0 },
+        );
+      }
     }
 
     if (!user) {
       throw new BadRequestException('User Not Found');
     }
   }
-
   async loginCompany(loginUserDto: LoginUserDto) {
     const company = await this.companyModel.findOne({
       email: loginUserDto.email,
@@ -133,10 +178,12 @@ export class AuthRepository {
       );
       if (!passwordCheck)
         throw new HttpException('Invalid Credentials', HttpStatus.BAD_REQUEST);
-      if (company.approved){
-        return this.companyModel.findOne({ email: loginUserDto.email },{password:0});
-      } 
-      else
+      if (company.approved) {
+        return this.companyModel.findOne(
+          { email: loginUserDto.email },
+          { password: 0 },
+        );
+      } else
         throw new HttpException(
           'Your page is not approved yet Please wait until administrator approve your request',
           HttpStatus.NOT_ACCEPTABLE,
@@ -147,7 +194,6 @@ export class AuthRepository {
       throw new BadRequestException('You did not have a page');
     }
   }
-
   async loginCompanyAdmin(loginUserDto: LoginUserDto) {
     const companyAdmin = await this.companyAdminModel.findOne({
       email: loginUserDto.email,
@@ -159,15 +205,13 @@ export class AuthRepository {
       );
       if (!passwordCheck)
         throw new HttpException('Invalid Credentials', HttpStatus.BAD_REQUEST);
-      else{
+      else {
         return this.companyAdminModel.findOne(
           { email: loginUserDto.email },
           { password: 0 },
         );
       }
-      
     }
-
     if (!companyAdmin) {
       throw new BadRequestException('You did not have a page');
     }

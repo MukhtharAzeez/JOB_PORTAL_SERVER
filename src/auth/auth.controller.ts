@@ -1,5 +1,6 @@
 import {
   BadGatewayException,
+  BadRequestException,
   Body,
   Controller,
   HttpException,
@@ -14,10 +15,23 @@ import * as nodemailer from 'nodemailer';
 import { EmailDto } from './dto/email.dto';
 import { CompanyCreateDto } from 'src/company/dto/companyCreate.dto';
 import { Company } from 'src/company/schema/company.schema';
+import { AdminDto } from './../admin/dto/admin.dto';
 
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
+
+  @Post('createAdmin')
+  async adminSignup(@Body() adminDto: AdminDto) {
+    this.authService.adminSignup(adminDto);
+  }
+  @Post('loginAdmin')
+  async loginAdmin(@Body() object: { email: string; password: string }) {
+    if (!object.email || !object.password) {
+      throw new BadRequestException('Fill all fields');
+    }
+    this.authService.loginAdmin(object.email, object.password);
+  }
 
   @Post('user/signup')
   async createUser(
@@ -92,7 +106,6 @@ export class AuthController {
           pass: process.env.PASS,
         },
       });
-
       await transporter.sendMail({
         from: process.env.USER,
         to: email,
