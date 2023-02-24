@@ -397,7 +397,7 @@ export class UserRepository {
   }
 
   async getRandomCompany(): Promise<Company[]> {
-    return this.companyModel.aggregate([{ $sample: { size: 1 } }]);
+    return this.companyModel.aggregate([{ $sample: { size: 2 } }]);
   }
 
   async getUsersBySearching(name: string): Promise<User[]> {
