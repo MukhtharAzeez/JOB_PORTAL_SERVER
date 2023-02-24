@@ -34,10 +34,10 @@ export class AuthService {
   }
 
   async adminSignup(adminDto: AdminDto) {
-    this.authRepository.adminSignup(adminDto);
+    return this.authRepository.adminSignup(adminDto);
   }
   async loginAdmin(email: string, password: string) {
-    this.authRepository.loginAdmin(email, password);
+    return this.authRepository.loginAdmin(email, password);
   }
 
   async createUser(createUserDto: CreateUserDto): Promise<any> {

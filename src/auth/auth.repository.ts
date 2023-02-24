@@ -1,7 +1,6 @@
 /* eslint-disable prettier/prettier */
 import { CreateUserDto } from 'src/user/dto/createUser.dto';
 import {
-  BadRequestException,
   HttpException,
   HttpStatus,
   Injectable,
@@ -21,6 +20,7 @@ import {
 } from 'src/company-admin/schema/company-admin.schema';
 import { AdminDto } from 'src/admin/dto/admin.dto';
 import { Admin, AdminDocument } from 'src/admin/schema/admin.schema';
+import { BadRequestException } from '@nestjs/common';
 
 @Injectable()
 export class AuthRepository {
@@ -35,9 +35,8 @@ export class AuthRepository {
 
   async adminSignup(adminDto: AdminDto) {
     if (adminDto.password != adminDto.confirmPassword) {
-      throw new HttpException(
-        'Password and confirm password must be same',
-        HttpStatus.BAD_REQUEST,
+      throw new BadRequestException(
+        'Password and confirm password must be same'
       );
     }
     const password = await argon2.hash(adminDto.password);

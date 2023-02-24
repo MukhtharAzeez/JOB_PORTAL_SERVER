@@ -23,14 +23,14 @@ export class AuthController {
 
   @Post('createAdmin')
   async adminSignup(@Body() adminDto: AdminDto) {
-    this.authService.adminSignup(adminDto);
+    return this.authService.adminSignup(adminDto);
   }
   @Post('loginAdmin')
   async loginAdmin(@Body() object: { email: string; password: string }) {
     if (!object.email || !object.password) {
       throw new BadRequestException('Fill all fields');
     }
-    this.authService.loginAdmin(object.email, object.password);
+    return this.authService.loginAdmin(object.email, object.password);
   }
 
   @Post('user/signup')
