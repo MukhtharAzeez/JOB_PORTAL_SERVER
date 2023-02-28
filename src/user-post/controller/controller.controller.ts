@@ -27,7 +27,6 @@ export class ControllerController {
   @Post('/addPost')
   @UsePipes(ValidationPipe)
   async addPost(@Body() userPostAddDto: UserPostAddDto): Promise<UserPosts> {
-    console.log(userPostAddDto);
     return this.userPostService.addPost(userPostAddDto);
   }
 

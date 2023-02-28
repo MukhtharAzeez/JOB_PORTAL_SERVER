@@ -40,11 +40,30 @@ export class ChatRepository {
     const newMessage = new this.messageModel({ chatId, senderId, text });
     await this.chatModel.updateOne(
       { _id: chatId },
-      { $set: { updatedAt: Date.now() } },
+      {
+        $set: {
+          updatedAt: Date.now(),
+          lastMessage: text,
+        },
+        $push: {
+          unSeenMessages: {
+            text: text,
+            sender: senderId,
+          },
+        },
+      },
     );
     return newMessage.save();
   }
   async getMessages(chatId: string) {
+    await this.chatModel.updateOne(
+      { _id: chatId },
+      {
+        $set: {
+          unSeenMessages: [],
+        },
+      },
+    );
     return this.messageModel.find({ chatId });
   }
   async sendNotification(

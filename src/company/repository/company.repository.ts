@@ -202,7 +202,6 @@ export class CompanyRepository {
       type: requestCheck.type,
     });
     await request.save();
-    console.log('but not fdsjlasjdafs');
 
     const userGetRequest = await this.userRequestsModel.findOne({
       company: requestCheck.company,

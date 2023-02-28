@@ -77,7 +77,6 @@ export class UserController {
   async userAcceptSchedule(
     @Query() object: { requestId: string },
   ): Promise<boolean> {
-    console.log(object);
     if (!object.requestId || object.requestId == 'undefined')
       throw new HttpException('An Error occurred', HttpStatus.CONFLICT);
     return this.userService.userAcceptSchedule(object.requestId);

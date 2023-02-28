@@ -17,6 +17,7 @@ import {
   JobApplicantDocument,
 } from 'src/job-applicants/schema/job-applicants.schema';
 import { Company, CompanyDocument } from 'src/company/schema/company.schema';
+import { UserPostDocument, UserPosts } from 'src/user-post/schemas/post.schema';
 
 @Injectable()
 export class UserRepository {
@@ -31,6 +32,8 @@ export class UserRepository {
     private jobApplicantModel: Model<JobApplicantDocument>,
     @InjectModel(Company.name)
     private companyModel: Model<CompanyDocument>,
+    @InjectModel(UserPosts.name)
+    private userPostModel: Model<UserPostDocument>,
   ) {}
 
   async find(): Promise<User[]> {
@@ -38,7 +41,27 @@ export class UserRepository {
   }
 
   async getCurrentUserProfile(userId: string): Promise<User> {
-    return this.userModel.findOne({ _id: userId }, { password: 0 });
+    const userPostsCount = await this.userPostModel
+      .find({ user: userId })
+      .count();
+    const user = await this.userModel.aggregate([
+      {
+        $match: {
+          _id: new Types.ObjectId(userId),
+        },
+      },
+      {
+        $project: {
+          password: 0,
+        },
+      },
+      {
+        $addFields: {
+          postCount: userPostsCount,
+        },
+      },
+    ]);
+    return user[0];
   }
 
   async updateProfile(userDetails: any): Promise<User> {

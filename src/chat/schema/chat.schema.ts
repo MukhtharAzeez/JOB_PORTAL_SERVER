@@ -14,6 +14,12 @@ export class Chat {
 
   @Prop({ required: true })
   type: string;
+
+  @Prop({ })
+  lastMessage: string;
+
+  @Prop({ })
+  unSeenMessages: Array<string>
 }
 
 export const ChatSchema = SchemaFactory.createForClass(Chat);

@@ -33,7 +33,7 @@ export class Company {
   udhyogAdhar: string;
 
   @Prop({ required: true })
-  fssaiLicense: string;
+  incorporation: string;
 
   @Prop({ required: true })
   password: string;
