@@ -8,6 +8,7 @@ import { LoginUserDto } from 'src/user/dto/loginUser.dto';
 import { CompanyCreateDto } from 'src/company/dto/companyCreate.dto';
 import { Company } from 'src/company/schema/company.schema';
 import { AdminDto } from 'src/admin/dto/admin.dto';
+import { Types } from 'mongoose';
 
 @Injectable()
 export class AuthService {
@@ -18,7 +19,7 @@ export class AuthService {
   ) {}
 
   // To create a JWT
-  async createToken(email: string, _id: string) {
+  async createToken(email: string, _id: string | Types.ObjectId) {
     const payLoad = {
       email,
       _id,
@@ -37,7 +38,14 @@ export class AuthService {
     return this.authRepository.adminSignup(adminDto);
   }
   async loginAdmin(email: string, password: string) {
-    return this.authRepository.loginAdmin(email, password);
+    const result = await this.authRepository.loginAdmin(email, password);
+    if (result) {
+      const accessToken = await this.createToken(result.email, result._id);
+      return {
+        result,
+        accessToken,
+      };
+    }
   }
 
   async createUser(createUserDto: CreateUserDto): Promise<any> {

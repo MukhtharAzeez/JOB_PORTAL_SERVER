@@ -21,11 +21,11 @@ import { AdminDto } from './../admin/dto/admin.dto';
 export class AuthController {
   constructor(private authService: AuthService) {}
 
-  @Post('createAdmin')
+  @Post('/admin/createAdmin')
   async adminSignup(@Body() adminDto: AdminDto) {
     return this.authService.adminSignup(adminDto);
   }
-  @Post('loginAdmin')
+  @Post('/admin/login')
   async loginAdmin(@Body() object: { email: string; password: string }) {
     if (!object.email || !object.password) {
       throw new BadRequestException('Fill all fields');
@@ -33,7 +33,7 @@ export class AuthController {
     return this.authService.loginAdmin(object.email, object.password);
   }
 
-  @Post('user/signup')
+  @Post('/user/signup')
   async createUser(
     @Body() createUserDto: CreateUserDto,
   ): Promise<CreateUserDto> {

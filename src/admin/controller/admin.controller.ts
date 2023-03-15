@@ -1,5 +1,6 @@
-import { Controller, Get, Query, HttpException, Patch } from '@nestjs/common';
+import { Controller, Get, Query, Patch, UseGuards } from '@nestjs/common';
 import { BadGatewayException } from '@nestjs/common/exceptions';
+import { AuthGuard } from '@nestjs/passport';
 import { Company } from 'src/company/schema/company.schema';
 import { AdminService } from '../service/admin.service';
 
@@ -7,6 +8,7 @@ import { AdminService } from '../service/admin.service';
 export class AdminController {
   constructor(private adminService: AdminService) {}
 
+  @UseGuards(AuthGuard('jwt'))
   @Get('/getAllCompanies')
   async getAllCompanies(
     @Query() object: { skip: number; limit: number },
@@ -14,11 +16,13 @@ export class AdminController {
     return this.adminService.getAllCompanies(object.limit, object.skip);
   }
 
+  @UseGuards(AuthGuard('jwt'))
   @Get('/getCountCompanies')
   async getCountCompanies(): Promise<number> {
     return this.adminService.getCountCompanies();
   }
 
+  @UseGuards(AuthGuard('jwt'))
   @Patch('/approveCompany')
   async approveCompany(
     @Query() object: { companyId: string },
@@ -26,6 +30,7 @@ export class AdminController {
     return this.adminService.approveCompany(object.companyId);
   }
 
+  @UseGuards(AuthGuard('jwt'))
   @Get('/getCompanyDetails')
   async getCompanyDetails(
     @Query() object: { companyId: string },
